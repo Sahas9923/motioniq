@@ -1,0 +1,297 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.register-container {
+  display: flex;
+  height: 100vh;
+  font-family: "Roboto", sans-serif;
+}
+
+/* LEFT PANEL */
+
+.left-panel {
+  flex: 1;
+  background: #1c1d46;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 60px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-box {
+  width: 42px;
+  height: 42px;
+  background: white;
+  border-radius: 4px;
+}
+
+.logo h2 {
+  font-size: 25.31px;
+  font-weight: 700;
+  line-height: 33.75px;
+}
+
+.left-content h1 {
+  font-size: 50.63px;
+  font-weight: 700;
+  line-height: 63.28px;
+}
+
+.left-content h1 span {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.left-content p {
+  margin-top: 25px;
+  font-size: 21.09px;
+  font-weight: 300;
+  line-height: 34.28px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-text {
+  font-size: 14.77px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* RIGHT PANEL */
+
+.right-panel {
+  flex: 1;
+  background: #f6f6f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-wrapper {
+  width: 450px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2e3139;
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 18.23px;
+  color: #64748b;
+  line-height: 27.34px;
+}
+
+.join-label {
+  margin-top: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.role-switch {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 4px;
+  margin-top: 8px;
+  margin-bottom: 20px;
+}
+
+.role-switch button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+  border-radius: 6px;
+}
+
+.role-switch .active {
+  background: #1754cf;
+  color: white;
+}
+
+.info-box {
+  background: rgba(23, 84, 207, 0.05);
+  border: 1px solid rgba(23, 84, 207, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 12px;
+  color: #475569;
+  line-height: 19.5px;
+  margin-bottom: 20px;
+}
+
+label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  margin-top: 16px;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  margin-top: 4px;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.password-hint {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 6px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;   /* better for multi-line text */
+  gap: 10px;
+  margin-top: 20px;
+  font-size: 12px;
+  color: #475569;
+  cursor: pointer;
+}
+
+.checkbox-row input {
+  width: 16px;
+  height: 16px;
+  margin-top: -2px; /* small adjustment for perfect alignment */
+  cursor: pointer;
+}
+
+.link-text {
+  color: #1754cf;
+  cursor: pointer;
+}
+
+.link-text:hover {
+  text-decoration: underline;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  border: none;
+  background: #1754cf;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.signin-link {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.signin-link span {
+  color: #1754cf;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialog-box {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 300px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.dialog-box h3 {
+  color: #1754CF;
+  margin-bottom: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialog-box {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 300px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.dialog-box h3 {
+  color: #1754CF;
+  margin-bottom: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
