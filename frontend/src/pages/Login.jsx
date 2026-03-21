@@ -1,8 +1,12 @@
-import React from "react";
+import { useState } from "react";
 import "../styles/Login.css";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [role, setRole] = useState("STUDENT");
+  const navigate = useNavigate();
+
   return (
     <div className="login-container">
       
@@ -42,8 +46,19 @@ const Login = () => {
           </p>
 
           <div className="role-switch">
-            <button className="active">Student</button>
-            <button>Lecturer</button>
+            <button
+              className={role === "STUDENT" ? "active" : ""}
+              onClick={() => setRole("STUDENT")}
+            >
+              Student
+            </button>
+
+            <button
+              className={role === "LECTURER" ? "active" : ""}
+              onClick={() => setRole("LECTURER")}
+            >
+              Lecturer
+            </button>
           </div>
 
           <button className="sso-btn">
@@ -69,9 +84,18 @@ const Login = () => {
             <span>Stay signed in for 30 days</span>
             </label>
 
-          <button className="login-btn">
-            Log In
-          </button>
+          <button
+              className="login-btn"
+              onClick={() => {
+                if (role === "STUDENT") {
+                  navigate("/student-dashboard");
+                } else if (role === "LECTURER") {
+                  navigate("/lecturer-dashboard");
+                }
+              }}
+            >
+              Log In
+            </button>
 
           <div className="bottom-text">
             New to MotionIQ?{" "}

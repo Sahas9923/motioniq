@@ -4,10 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
+
+  const [role, setRole] = useState("STUDENT"); // ✅ role state
   const [showDialog, setShowDialog] = useState(false);
 
   const handleCreateAccount = () => {
-    // Later you will connect backend API here
+    // 🔐 Save role (for later use)
+    localStorage.setItem("role", role);
 
     setShowDialog(true);
 
@@ -19,6 +22,7 @@ const Register = () => {
 
   return (
     <div className="register-container">
+
       {/* LEFT PANEL */}
       <div className="left-panel">
         <div className="logo">
@@ -35,8 +39,7 @@ const Register = () => {
 
           <p>
             The premier platform for scholarly film analysis and
-            critical cinematic inquiry. Empowering university
-            students to decode the language of motion pictures.
+            critical cinematic inquiry.
           </p>
         </div>
 
@@ -56,17 +59,26 @@ const Register = () => {
 
           <label className="join-label">Join as a:</label>
 
+          {/* ✅ ROLE SWITCH FIXED */}
           <div className="role-switch">
-            <button className="active">Student</button>
-            <button>Lecturer</button>
+            <button
+              className={role === "STUDENT" ? "active" : ""}
+              onClick={() => setRole("STUDENT")}
+            >
+              Student
+            </button>
+
+            <button
+              className={role === "LECTURER" ? "active" : ""}
+              onClick={() => setRole("LECTURER")}
+            >
+              Lecturer
+            </button>
           </div>
 
           <div className="info-box">
             <p>
-              To synchronize your viewing assignments and grades,
-              please provide your verified university credentials.
-              This ensures seamless integration with your campus
-              <strong> LMS</strong>.
+              Provide your verified university credentials for LMS integration.
             </p>
           </div>
 
@@ -76,22 +88,25 @@ const Register = () => {
           <label>University Email Address</label>
           <input type="email" placeholder="j.doe@university.edu" />
 
-          <label>Course Code</label>
-          <input type="text" placeholder="e.g. FILM101" />
+          {/* 🔄 OPTIONAL: show course only for students */}
+          {role === "STUDENT" && (
+            <>
+              <label>Course Code</label>
+              <input type="text" placeholder="e.g. FILM101" />
+            </>
+          )}
 
           <label>Password</label>
           <input type="password" placeholder="••••••••" />
 
           <div className="password-hint">
-            Use 8 or more characters with a mix of letters, numbers & symbols.
+            Use 8+ characters with letters, numbers & symbols.
           </div>
 
           <label className="checkbox-row">
             <input type="checkbox" />
             <span>
-              I agree to the{" "}
-              <span className="link-text">Academic Integrity Policy</span> and the{" "}
-              <span className="link-text">Terms of Service</span>.
+              I agree to Terms & Policies
             </span>
           </label>
 
