@@ -1,0 +1,129 @@
+.dashboard {
+  display: flex;
+  height: 100vh;
+  background: #0f172a;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: #020617; /* darker */
+  color: #08192e;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: rgb(14, 12, 12);
+}
+
+.portal {
+  font-size: 20px;
+  color: #1a2d47;
+  margin-bottom: 30px;
+  align-self: center;
+  margin-top: -15px;
+  margin-right: 20px;
+}
+
+/* MENU */
+.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  margin-bottom: 10px;
+}
+
+/* LINKS */
+.menu li a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+/* 🔥 HOVER ONLY */
+.menu li a:hover {
+  background: #1e293b;
+  color: white;
+}
+
+/* REMOVE ACTIVE STYLE COMPLETELY */
+.menu li.active a {
+  background: none;
+  color: #94a3b8;
+}
+
+/* BOTTOM */
+.bottom-menu {
+  margin-top: auto;
+}
+
+.bottom-menu p {
+  cursor: pointer;
+  padding: 8px 0;
+  color: #94a3b8;
+}
+
+/* SETTINGS */
+.settings-dropdown {
+  background: #1e293b;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+.settings-dropdown button {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 8px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* PREMIUM */
+.premium {
+  margin-top: 20px;
+  padding: 15px;
+  background: #111827;
+  border-radius: 10px;
+  color: #e2e8f0;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.premium-title {
+  font-weight: bold;
+}
+
+.premium button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background: white;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  background: #f8fafc;
+  padding: 20px;
+  overflow-y: auto;
+}

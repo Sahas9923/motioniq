@@ -125,7 +125,7 @@ const VideoLibrary = () => {
 
       {/* SIDEBAR */}
       <div className="sidebar">
-        <h2 className="logo">MotionIQ</h2>
+        <h2 className="logo">🎬 MotionIQ</h2>
         <p className="portal">Student Portal</p>
 
         <ul className="menu">
