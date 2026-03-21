@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/StudentDashboard.css";
+
 import boy from "../assets/boy.jpg";
 import film from "../assets/film.jpg";
 import girl from "../assets/girl.jpg";
@@ -16,6 +18,41 @@ import {
 } from "react-icons/md";
 
 const StudentDashboard = () => {
+
+  // ✅ STATE
+  const [showSettings, setShowSettings] = useState(false);
+
+  // ✅ NAVIGATION
+  const navigate = useNavigate();
+
+  // ✅ LOGOUT
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+
+  // ✅ DASHBOARD DATA (can connect backend later)
+  const stats = {
+    videosWatched: 12,
+    questionsCompleted: 8,
+    reflectionsDone: 5,
+  };
+
+  const discussions = [
+    {
+      title: "The Minute",
+      message: "I think the decision was rushed."
+    },
+    {
+      title: "Office Situation",
+      message: "This happens in real life a lot."
+    },
+    {
+      title: "A Simple Choice",
+      message: "Small decisions matter."
+    }
+  ];
+
   return (
     <div className="dashboard">
 
@@ -26,16 +63,28 @@ const StudentDashboard = () => {
 
         <ul className="menu">
           <li className="active"><MdDashboard /> Dashboard</li>
-          <li><MdPlayCircle /> Videos</li>
-          <li><MdQuestionAnswer /> Guided Questions</li>
-          <li><MdNotes /> Reflections</li>
-          <li><MdForum /> Discussion</li>
+          <li><Link to="/videos"><MdPlayCircle /> Videos</Link></li>
+          <li><Link to="/guided-questions"><MdQuestionAnswer /> Guided Questions</Link></li>
+          <li><Link to="/reflections"><MdNotes /> Reflections</Link></li>
+          <li><Link to="/discussion"><MdForum /> Discussion</Link></li>
           <li><MdFeedback /> Feedback</li>
         </ul>
 
+        {/* SETTINGS */}
         <div className="bottom-menu">
           <p><MdPerson /> Profile</p>
-          <p><MdSettings /> Settings</p>
+
+          <div className="settings-container">
+            <p onClick={() => setShowSettings(!showSettings)}>
+              <MdSettings /> Settings
+            </p>
+
+            {showSettings && (
+              <div className="settings-dropdown">
+                <button onClick={handleLogout}>Logout</button>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="premium">
@@ -66,7 +115,7 @@ const StudentDashboard = () => {
           <div>
             <h1>Welcome Back, Alex!</h1>
             <p>
-              You're on a 5-day learning streak. You're in the top 10% of your class.
+              You're actively improving your critical thinking skills. Keep progressing!
             </p>
           </div>
 
@@ -76,25 +125,27 @@ const StudentDashboard = () => {
           </div>
         </div>
 
-        {/* STATS */}
+        {/* 🔥 UPDATED STATS */}
         <div className="stats">
+
           <div className="card">
-            <h4>Weekly Streak</h4>
-            <h2>5 Days</h2>
-            <span className="green">+20%</span>
+            <h4>Videos Watched</h4>
+            <h2>{stats.videosWatched}</h2>
+            <span className="green">+3 this week</span>
           </div>
 
           <div className="card">
-            <h4>Videos Completed</h4>
-            <h2>12</h2>
-            <span className="green">+2 new</span>
+            <h4>Questions Completed</h4>
+            <h2>{stats.questionsCompleted}</h2>
+            <span className="green">+2 today</span>
           </div>
 
           <div className="card">
-            <h4>Pending Tasks</h4>
-            <h2>4</h2>
-            <span className="gray">Due today</span>
+            <h4>Reflections Submitted</h4>
+            <h2>{stats.reflectionsDone}</h2>
+            <span className="gray">Keep going</span>
           </div>
+
         </div>
 
         {/* CONTENT */}
@@ -111,10 +162,8 @@ const StudentDashboard = () => {
             <div className="video-card">
               <img src={film} alt="" />
               <div className="video-info">
-                <h4>Advanced Cinematic Lighting: The Noir Style</h4>
-                <p>
-                  Exploring high-contrast lighting techniques and shadow manipulation.
-                </p>
+                <h4>Advanced Cinematic Lighting</h4>
+                <p>High-contrast lighting techniques.</p>
 
                 <div className="progress">
                   <span>65% Completed</span>
@@ -131,9 +180,7 @@ const StudentDashboard = () => {
               <img src={girl} alt="" />
               <div className="video-info">
                 <h4>Symmetry and Composition</h4>
-                <p>
-                  How symmetry affects viewer psychology and narrative focus.
-                </p>
+                <p>Understanding visual balance.</p>
 
                 <div className="progress">
                   <span>20% Completed</span>
@@ -151,47 +198,23 @@ const StudentDashboard = () => {
           {/* RIGHT */}
           <div className="right">
 
-            <div className="tasks">
-              <h3>Pending Tasks</h3>
+            {/* 🔥 DISCUSSIONS */}
+            <div className="discussion-box">
+              <h3>Your Discussion Contributions</h3>
 
-              <div className="task">
-                <p>Answer Guided Questions</p>
-                <span>Due in 2 hours • Module 4</span>
-              </div>
-
-              <div className="task">
-                <p>Submit Reflection</p>
-                <span>Due tomorrow • Project A</span>
-              </div>
-
-              <div className="task">
-                <p>Peer Review Session</p>
-                <span>Scheduled for Thursday</span>
-              </div>
-
-              <button className="calendar">View Calendar</button>
-            </div>
-
-            <div className="feedback">
-              <h3>Latest Feedback</h3>
-
-              <div className="fb">
-                <p className="name">Prof. Marcus Sterling</p>
-                <span>Video: Composition Basics</span>
-                <p className="msg">"Excellent analysis..."</p>
-              </div>
-
-              <div className="fb">
-                <p className="name">Sarah Jenkins</p>
-                <span>Reflection: Soundscapes</span>
-                <p className="msg">"Great connection..."</p>
-              </div>
+              {discussions.map((item, index) => (
+                <div key={index} className="discussion-item">
+                  <h4>{item.title}</h4>
+                  <p>"{item.message}"</p>
+                </div>
+              ))}
 
             </div>
 
           </div>
 
         </div>
+
       </div>
     </div>
   );

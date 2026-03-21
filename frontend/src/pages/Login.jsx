@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "../styles/Login.css";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [role, setRole] = useState("STUDENT");
@@ -74,7 +73,11 @@ const Login = () => {
 
           <div className="password-row">
             <label>Password</label>
-            <a href="#">Forgot?</a>
+
+            {/* ✅ FIXED HERE */}
+            <Link to="/forgot-password" className="link-style">
+              Forgot?
+            </Link>
           </div>
 
           <input type="password" placeholder="••••••••" />
@@ -82,27 +85,27 @@ const Login = () => {
           <label className="remember">
             <input type="checkbox" />
             <span>Stay signed in for 30 days</span>
-            </label>
+          </label>
 
           <button
-              className="login-btn"
-              onClick={() => {
-                if (role === "STUDENT") {
-                  navigate("/student-dashboard");
-                } else if (role === "LECTURER") {
-                  navigate("/lecturer-dashboard");
-                }
-              }}
-            >
-              Log In
-            </button>
+            className="login-btn"
+            onClick={() => {
+              if (role === "STUDENT") {
+                navigate("/student-dashboard");
+              } else if (role === "LECTURER") {
+                navigate("/lecturer-dashboard");
+              }
+            }}
+          >
+            Log In
+          </button>
 
           <div className="bottom-text">
             New to MotionIQ?{" "}
             <Link to="/register" className="link-style">
-                Request access from administrator
+              Request access from administrator
             </Link>
-            </div>
+          </div>
 
         </div>
       </div>
