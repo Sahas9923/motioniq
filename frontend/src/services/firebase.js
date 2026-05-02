@@ -6,8 +6,6 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// (Optional analytics)
-import { getAnalytics } from "firebase/analytics";
 
 // Your config
 const firebaseConfig = {
@@ -22,9 +20,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Optional (can keep or remove)
-const analytics = getAnalytics(app);
 
 // ✅ 🔥 EXPORT THESE (THIS FIXES YOUR ERROR)
 export const auth = getAuth(app);
