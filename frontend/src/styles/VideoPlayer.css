@@ -1,51 +1,88 @@
-/* PAGE BACKGROUND */
+/* 🌙 PAGE */
 .player-page {
-  background: #0f172a; /* dark navy */
+  background: linear-gradient(135deg, #020617, #0f172a);
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 30px;
+  padding: 40px 20px;
+  color: #e5e7eb;
+  font-family: "Inter", sans-serif;
 }
 
-/* MAIN CONTAINER */
+/* CONTAINER */
 .player-container {
   width: 100%;
   max-width: 1000px;
 }
 
-/* VIDEO WRAPPER (16:9 RATIO) */
+/* BACK BUTTON */
+.back-btn {
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  background: #111827;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.back-btn:hover {
+  background: #1f2937;
+}
+
+/* VIDEO WRAPPER */
 .video-wrapper {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 ratio */
-  border-radius: 12px;
+  padding-top: 56.25%;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  background: black;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
 }
 
-/* IFRAME */
-.video-wrapper iframe {
+/* VIDEO + IFRAME */
+.video-wrapper iframe,
+.video-wrapper video {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   border: none;
+  object-fit: cover;
 }
 
-/* VIDEO INFO */
+/* INFO */
 .video-info {
   margin-top: 20px;
-  color: white;
 }
 
 .video-info h2 {
-  font-size: 22px;
-  margin-bottom: 8px;
+  font-size: 24px;
+  font-weight: 600;
 }
 
 .video-info p {
   color: #94a3b8;
-  font-size: 14px;
+  margin-top: 6px;
+}
+
+/* TAG */
+.video-tag {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 999px;
+  background: rgba(99,102,241,0.2);
+  color: #c7d2fe;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .video-info h2 {
+    font-size: 20px;
+  }
 }

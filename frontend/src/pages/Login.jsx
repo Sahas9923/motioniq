@@ -1,15 +1,34 @@
 import { useState } from "react";
 import "../styles/Login.css";
 import { Link, useNavigate } from "react-router-dom";
+import { loginUser, getUserData } from "../services/authService";
 
 const Login = () => {
-  const [role, setRole] = useState("STUDENT");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    try {
+      const userCredential = await loginUser(email, password);
+      const user = userCredential.user;
+
+      const userData = await getUserData(user.uid);
+
+      if (userData.role === "STUDENT") {
+        navigate("/student-dashboard");
+      } else {
+        navigate("/lecturer-dashboard");
+      }
+
+    } catch {
+      alert("Login failed");
+    }
+  };
 
   return (
     <div className="login-container">
-      
-      {/* LEFT PANEL */}
+
       <div className="left-panel">
         <div className="logo">
           <div className="logo-box"></div>
@@ -22,88 +41,33 @@ const Login = () => {
             <br />
             <span>Questioning the Narrative.</span>
           </h1>
-
-          <p>
-            The premier platform for scholarly film analysis and
-            critical cinematic inquiry. Empowering university
-            students to decode the language of motion pictures.
-          </p>
+          <p>Scholarly film analysis platform.</p>
         </div>
 
         <div className="footer-text">
-          © 2026 MotionIQ Academic · University Partnership Program
+          © 2026 MotionIQ Academic
         </div>
       </div>
 
-      {/* RIGHT PANEL */}
       <div className="right-panel">
         <div className="login-box">
 
           <h2>Welcome Back</h2>
-          <p className="subtitle">
-            Please enter your academic credentials to continue.
-          </p>
 
-          <div className="role-switch">
-            <button
-              className={role === "STUDENT" ? "active" : ""}
-              onClick={() => setRole("STUDENT")}
-            >
-              Student
-            </button>
+          <label>Email</label>
+          <input type="email" onChange={(e) => setEmail(e.target.value)} />
 
-            <button
-              className={role === "LECTURER" ? "active" : ""}
-              onClick={() => setRole("LECTURER")}
-            >
-              Lecturer
-            </button>
-          </div>
+          <label>Password</label>
+          <input type="password" onChange={(e) => setPassword(e.target.value)} />
 
-          <button className="sso-btn">
-            Sign in with University SSO
-          </button>
-
-          <div className="divider">
-            <span>Or use credentials</span>
-          </div>
-
-          <label>University Email</label>
-          <input type="email" placeholder="name@university.com" />
-
-          <div className="password-row">
-            <label>Password</label>
-
-            {/* ✅ FIXED HERE */}
-            <Link to="/forgot-password" className="link-style">
-              Forgot?
-            </Link>
-          </div>
-
-          <input type="password" placeholder="••••••••" />
-
-          <label className="remember">
-            <input type="checkbox" />
-            <span>Stay signed in for 30 days</span>
-          </label>
-
-          <button
-            className="login-btn"
-            onClick={() => {
-              if (role === "STUDENT") {
-                navigate("/student-dashboard");
-              } else if (role === "LECTURER") {
-                navigate("/lecturer-dashboard");
-              }
-            }}
-          >
+          <button className="login-btn" onClick={handleLogin}>
             Log In
           </button>
 
           <div className="bottom-text">
-            New to MotionIQ?{" "}
+            Don’t have an account?{" "}
             <Link to="/register" className="link-style">
-              Request access from administrator
+              Register
             </Link>
           </div>
 

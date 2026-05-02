@@ -10,6 +10,7 @@ import GuidedQuestions from "./pages/GuidedQuestions";
 import Reflection from "./pages/Reflection";  
 import Discussion from "./pages/Discussion";
 import LecturerDashboard from "./pages/LecturerDashboard";
+import Admin from "./pages/Admin";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/reflections" element={<Reflection />} />
         <Route path="/discussion" element={<Discussion />} />
         <Route path="/lecturer-dashboard" element={<LecturerDashboard />} />
+        <Route path="/admin" element={<Admin />} />
 
 
       </Routes>

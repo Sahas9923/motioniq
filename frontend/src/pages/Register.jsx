@@ -1,27 +1,60 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "../styles/Register.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from "../services/authService";
 
 const Register = () => {
+  const [role, setRole] = useState("STUDENT");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [faculty, setFaculty] = useState("");
+  const [batch, setBatch] = useState("");
+  const [indexNumber, setIndexNumber] = useState("");
+  const [dob, setDob] = useState("");
+
   const navigate = useNavigate();
 
-  const [role, setRole] = useState("STUDENT"); // ✅ role state
-  const [showDialog, setShowDialog] = useState(false);
+  const handleRegister = async () => {
+    try {
+      if (!faculty) {
+        alert("Select faculty");
+        return;
+      }
 
-  const handleCreateAccount = () => {
-    // 🔐 Save role (for later use)
-    localStorage.setItem("role", role);
+      if (role === "STUDENT") {
+        if (!batch) {
+          alert("Select batch");
+          return;
+        }
+        if (!indexNumber) {
+          alert("Enter index number");
+          return;
+        }
+      }
 
-    setShowDialog(true);
+      await registerUser(
+        email,
+        password,
+        role,
+        faculty,
+        batch,
+        indexNumber,
+        dob
+      );
 
-    // Redirect after 2 seconds
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
+      alert("Account created!");
+
+      navigate(role === "STUDENT"
+        ? "/student-dashboard"
+        : "/lecturer-dashboard");
+
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   return (
-    <div className="register-container">
+    <div className="login-container">
 
       {/* LEFT PANEL */}
       <div className="left-panel">
@@ -32,34 +65,25 @@ const Register = () => {
 
         <div className="left-content">
           <h1>
-            Analyzing the Frame.
+            Join the Platform.
             <br />
-            <span>Questioning the Narrative.</span>
+            <span>Start Your Journey.</span>
           </h1>
-
-          <p>
-            The premier platform for scholarly film analysis and
-            critical cinematic inquiry.
-          </p>
+          <p>Register for academic film analysis.</p>
         </div>
 
         <div className="footer-text">
-          © 2026 MotionIQ Academic · University Partnership Program
+          © 2026 MotionIQ Academic
         </div>
       </div>
 
       {/* RIGHT PANEL */}
       <div className="right-panel">
-        <div className="form-wrapper">
+        <div className="login-box">
 
-          <h2 className="title">Get Started Now</h2>
-          <p className="subtitle">
-            Please enter your academic credentials to continue.
-          </p>
+          <h2>Create Account</h2>
 
-          <label className="join-label">Join as a:</label>
-
-          {/* ✅ ROLE SWITCH FIXED */}
+          {/* ROLE SWITCH */}
           <div className="role-switch">
             <button
               className={role === "STUDENT" ? "active" : ""}
@@ -70,75 +94,84 @@ const Register = () => {
 
             <button
               className={role === "LECTURER" ? "active" : ""}
-              onClick={() => setRole("LECTURER")}
+              onClick={() => {
+                setRole("LECTURER");
+                setBatch("");
+                setIndexNumber("");
+              }}
             >
               Lecturer
             </button>
           </div>
 
-          <div className="info-box">
-            <p>
-              Provide your verified university credentials for LMS integration.
-            </p>
+          {/* FORM GRID */}
+          <div className="form-grid">
+
+            {/* Faculty */}
+            <div className="form-group">
+              <label>Faculty</label>
+              <select onChange={(e) => setFaculty(e.target.value)}>
+                <option value="">Select Faculty</option>
+                <option>School of Computing</option>
+                <option>School of Engineering</option>
+                <option>School of Design</option>
+                <option>School of Business</option>
+              </select>
+            </div>
+
+            {/* DOB */}
+            <div className="form-group">
+              <label>Date of Birth</label>
+              <input type="date" onChange={(e) => setDob(e.target.value)} />
+            </div>
+
+            {/* STUDENT ONLY */}
+            {role === "STUDENT" && (
+              <>
+                <div className="form-group">
+                  <label>Batch</label>
+                  <select onChange={(e) => setBatch(e.target.value)}>
+                    <option value="">Select Batch</option>
+                    <option>2022</option>
+                    <option>2023</option>
+                    <option>2024</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Index Number</label>
+                  <input type="text" onChange={(e) => setIndexNumber(e.target.value)} />
+                </div>
+              </>
+            )}
+
+            {/* Email FULL */}
+            <div className="form-group full-width">
+              <label>Email</label>
+              <input type="email" onChange={(e) => setEmail(e.target.value)} />
+            </div>
+
+            {/* Password FULL */}
+            <div className="form-group full-width">
+              <label>Password</label>
+              <input type="password" onChange={(e) => setPassword(e.target.value)} />
+            </div>
+
           </div>
 
-          <label>Full Name</label>
-          <input type="text" placeholder="Jane Doe" />
-
-          <label>University Email Address</label>
-          <input type="email" placeholder="j.doe@university.edu" />
-
-          {/* 🔄 OPTIONAL: show course only for students */}
-          {role === "STUDENT" && (
-            <>
-              <label>Course Code</label>
-              <input type="text" placeholder="e.g. FILM101" />
-            </>
-          )}
-
-          <label>Password</label>
-          <input type="password" placeholder="••••••••" />
-
-          <div className="password-hint">
-            Use 8+ characters with letters, numbers & symbols.
-          </div>
-
-          <label className="checkbox-row">
-            <input type="checkbox" />
-            <span>
-              I agree to Terms & Policies
-            </span>
-          </label>
-
-          <button
-            className="submit-btn"
-            onClick={handleCreateAccount}
-          >
-            Create Account
+          <button className="login-btn" onClick={handleRegister}>
+            Register
           </button>
 
-          <div className="signin-link">
+          <div className="bottom-text">
             Already have an account?{" "}
-            <span
-              className="link-text"
-              onClick={() => navigate("/")}
-            >
-              Sign In
-            </span>
+            <Link to="/" className="link-style">
+              Login
+            </Link>
           </div>
 
         </div>
       </div>
-
-      {/* SUCCESS DIALOG */}
-      {showDialog && (
-        <div className="dialog-overlay">
-          <div className="dialog-box">
-            <h3>Account Created Successfully!</h3>
-            <p>Redirecting to Login...</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
