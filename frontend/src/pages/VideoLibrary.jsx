@@ -1,133 +1,487 @@
-import React, { useState, useEffect } from "react";
-import "../styles/VideoLibrary.css";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import { useNavigate } from "react-router-dom";
 
 import {
   MdDashboard,
+  MdVideoLibrary,
+  MdSearch,
+  MdMovie,
   MdPlayCircle,
+  MdForum,
   MdQuestionAnswer,
   MdNotes,
-  MdForum,
-  MdFeedback,
-  MdPerson,
-  MdSettings,
+  MdLogout,
+  MdAccessTime,
 } from "react-icons/md";
 
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+} from "firebase/firestore";
+
 import { db } from "../services/firebase";
 
-const VideoLibrary = () => {
+import "../styles/VideoLibrary.css";
+
+const StudentVideoLibrary = () => {
 
   const navigate = useNavigate();
-  const [showSettings, setShowSettings] = useState(false);
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  /* 🔥 FETCH FROM FIRESTORE */
+  const [videos, setVideos] =
+    useState([]);
+
+  const [search, setSearch] =
+    useState("");
+
+  const [
+    facultyFilter,
+    setFacultyFilter,
+  ] = useState("");
+
+  /* USER */
+  const userName =
+    localStorage.getItem(
+      "fullName"
+    ) || "Student";
+
+  const email =
+    localStorage.getItem(
+      "userEmail"
+    ) || "";
+
+  /* FETCH VIDEOS */
   useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "videos"));
-
-        const list = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        setVideos(list);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchVideos();
+
   }, []);
 
-  /* 🔥 USER DATA (FOR FILTERING) */
-  const user = JSON.parse(localStorage.getItem("user"));
+  const fetchVideos =
+    async () => {
 
-  const filteredVideos = user?.faculty
-    ? videos.filter(v => v.faculty === user.faculty)
-    : videos;
+      try {
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/");
-  };
+        const querySnapshot =
+          await getDocs(
+            collection(
+              db,
+              "videos"
+            )
+          );
+
+        const data =
+          querySnapshot.docs.map(
+            (doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })
+          );
+
+        data.sort(
+          (a, b) =>
+            b.createdAt?.seconds -
+            a.createdAt?.seconds
+        );
+
+        setVideos(data);
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    };
+
+  /* FILTER */
+  const filteredVideos =
+    videos.filter((video) => {
+
+      const matchesSearch =
+        video.title
+          ?.toLowerCase()
+          .includes(
+            search.toLowerCase()
+          );
+
+      const matchesFaculty =
+        facultyFilter === "" ||
+        video.faculty ===
+          facultyFilter;
+
+      return (
+        matchesSearch &&
+        matchesFaculty
+      );
+
+    });
+
+  /* LOGOUT */
+  const handleLogout =
+    () => {
+
+      localStorage.clear();
+
+      navigate("/");
+
+    };
 
   return (
-    <div className="dashboard">
+
+    <div className="student-library-page">
 
       {/* SIDEBAR */}
-      <div className="sidebar">
-        <h2 className="logo">🎬 MotionIQ</h2>
-        <p className="portal">Student Portal</p>
+      <div className="student-sidebar">
 
-        <ul className="menu">
-          <li><Link to="/student-dashboard"><MdDashboard /> Dashboard</Link></li>
-          <li className="active"><Link to="/videos"><MdPlayCircle /> Videos</Link></li>
-          <li><Link to="/guided-questions"><MdQuestionAnswer /> Guided Questions</Link></li>
-          <li><Link to="/reflections"><MdNotes /> Reflections</Link></li>
-          <li><Link to="/discussion"><MdForum /> Discussion</Link></li>
-          <li><MdFeedback /> Feedback</li>
-        </ul>
+        <div>
 
-        <div className="bottom-menu">
-          <p><MdPerson /> Profile</p>
+          {/* LOGO */}
+          <div className="student-sidebar-logo">
 
-          <div className="settings-container">
-            <p onClick={() => setShowSettings(!showSettings)}>
-              <MdSettings /> Settings
-            </p>
+            <div className="logo-icon">
+              🎬
+            </div>
 
-            {showSettings && (
-              <div className="settings-dropdown">
-                <button onClick={handleLogout}>Logout</button>
-              </div>
-            )}
+            <div>
+
+              <h2>
+                MotionIQ
+              </h2>
+
+              <p>
+                Student Portal
+              </p>
+
+            </div>
+
           </div>
+
+          {/* NAVIGATION */}
+          <div className="student-nav-links">
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/student-dashboard"
+                )
+              }
+            >
+
+              <MdDashboard />
+
+              Dashboard
+
+            </button>
+
+            <button className="active-link">
+
+              <MdVideoLibrary />
+
+              Video Library
+
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/guided-questions"
+                )
+              }
+            >
+
+              <MdQuestionAnswer />
+
+              Questions
+
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/discussion"
+                )
+              }
+            >
+
+              <MdForum />
+
+              Discussions
+
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/reflections"
+                )
+              }
+            >
+
+              <MdNotes />
+
+              Reflections
+
+            </button>
+
+          </div>
+
         </div>
+
+        {/* PROFILE */}
+        <div>
+
+          <div className="student-profile-box">
+
+            <div className="profile-circle">
+
+              {userName
+                ?.charAt(0)
+                ?.toUpperCase()}
+
+            </div>
+
+            <div>
+
+              <h4>
+                {userName}
+              </h4>
+
+              <p>
+                {email}
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* LOGOUT */}
+          <button
+            className="logout-btn"
+            onClick={handleLogout}
+          >
+
+            <MdLogout />
+
+            Logout
+
+          </button>
+
+        </div>
+
       </div>
 
       {/* MAIN */}
-      <div className="main">
+      <div className="student-library-main">
 
-        <div className="header">
-          <input type="text" placeholder="Search videos..." />
-        </div>
+        {/* TOP */}
+        <div className="library-top">
 
-        <h1>Video Library</h1>
+          <div>
 
-        {/* 🔥 LOADING */}
-        {loading ? (
-          <p style={{ color: "white" }}>Loading videos...</p>
-        ) : (
-          <div className="video-grid">
+            <h1>
+              Video Library
+            </h1>
 
-            {filteredVideos.map((video) => (
-              <div
-                className="video-card"
-                key={video.id}
-                onClick={() => navigate("/player", { state: video })}
-              >
-                <img src={video.imageURL} alt="" />
-
-                <div className="video-content">
-                  <span className="tag">{video.faculty}</span>
-                  <h3>{video.title}</h3>
-                  <p>{video.description}</p>
-                </div>
-              </div>
-            ))}
+            <p>
+              Explore cinematic
+              educational content
+            </p>
 
           </div>
-        )}
+
+        </div>
+
+        {/* FILTER */}
+        <div className="filter-bar">
+
+          {/* SEARCH */}
+          <div className="search-box">
+
+            <MdSearch className="search-icon" />
+
+            <input
+              type="text"
+              placeholder="Search videos..."
+              value={search}
+              onChange={(e) =>
+                setSearch(
+                  e.target.value
+                )
+              }
+            />
+
+          </div>
+
+          {/* FACULTY */}
+          <select
+            className="faculty-filter"
+            value={facultyFilter}
+            onChange={(e) =>
+              setFacultyFilter(
+                e.target.value
+              )
+            }
+          >
+
+            <option value="">
+              All Faculties
+            </option>
+
+            <option>
+              School of Computing
+            </option>
+
+            <option>
+              School of Business
+            </option>
+
+            <option>
+              School of Engineering
+            </option>
+
+            <option>
+              School of Design
+            </option>
+
+          </select>
+
+        </div>
+
+        {/* GRID */}
+        <div className="student-video-grid">
+
+          {filteredVideos.map(
+            (video) => (
+
+              <div
+                className="student-video-card"
+                key={video.id}
+              >
+
+                {/* IMAGE */}
+                <div className="video-image-wrapper">
+
+                  <img
+                    src={
+                      video.imageURL
+                    }
+                    alt={
+                      video.title
+                    }
+                    className="student-video-image"
+                  />
+
+                  <div className="play-overlay">
+
+                    <MdPlayCircle />
+
+                  </div>
+
+                </div>
+
+                {/* CONTENT */}
+                <div className="student-video-content">
+
+                  <div className="student-video-top">
+
+                    <div>
+
+                      <h3>
+                        {
+                          video.title
+                        }
+                      </h3>
+
+                      <span>
+                        {
+                          video.faculty
+                        }
+                      </span>
+
+                    </div>
+
+                    <div className="video-badge">
+
+                      <MdMovie />
+
+                      {
+                        video.videoType
+                      }
+
+                    </div>
+
+                  </div>
+
+                  <p>
+                    {
+                      video.description
+                    }
+                  </p>
+
+                  <div className="video-meta">
+
+                    <div>
+
+                      <MdAccessTime />
+
+                      45 mins
+
+                    </div>
+
+                    <div>
+
+                      HD Quality
+
+                    </div>
+
+                  </div>
+
+                  {/* WATCH */}
+                  <div className="student-actions">
+
+                    <button
+                      className="watch-btn"
+                      onClick={() =>
+                        navigate(
+                          "/player",
+                          {
+                            state:{
+                              videoURL:
+                                video.videoURL,
+                              title:
+                                video.title,
+                              description:
+                                video.description,
+                            },
+                          }
+                        )
+                      }
+                    >
+
+                      <MdPlayCircle />
+
+                      Watch Now
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            )
+          )}
+
+        </div>
 
       </div>
+
     </div>
+
   );
+
 };
 
-export default VideoLibrary;
+export default StudentVideoLibrary;

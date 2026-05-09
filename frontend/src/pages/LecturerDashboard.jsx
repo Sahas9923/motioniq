@@ -1,5 +1,4 @@
 import React from "react";
-import "../styles/LecturerDashboard.css";
 import profilepic from "../assets/9.jpg";
 import pic1 from "../assets/1.png";
 import pic2 from "../assets/2.png";

@@ -58,9 +58,7 @@ const StudentDashboard = () => {
 
   }, []);
 
-  /* =========================
-     FETCH VIDEOS
-  ========================= */
+  /* FETCH VIDEOS */
   const fetchVideos =
     async () => {
 
@@ -92,9 +90,7 @@ const StudentDashboard = () => {
 
     };
 
-  /* =========================
-     FETCH REFLECTIONS
-  ========================= */
+  /* FETCH REFLECTIONS */
   const fetchReflections =
     async () => {
 
@@ -120,9 +116,7 @@ const StudentDashboard = () => {
 
     };
 
-  /* =========================
-     LOGOUT
-  ========================= */
+  /* LOGOUT */
   const handleLogout =
     () => {
 
@@ -136,129 +130,110 @@ const StudentDashboard = () => {
 
     <div className="dashboard-page">
 
-      {/* =========================
-          SIDEBAR
-      ========================= */}
-      <div className="sidebar">
+      {/* SIDEBAR */}
+      <div className="studentsidebar">
 
-        {/* LOGO */}
-        <div className="sidebar-logo">
+        <div>
 
-          <div className="logo-icon">
-            🎬
-          </div>
+          {/* LOGO */}
+          <div className="sidebar-logo">
 
-          <div>
+            <div className="logo-icon">
+              🎬
+            </div>
 
-            <h2>
-              MotionIQ
-            </h2>
+            <div>
 
-            <p>
-              Student Portal
-            </p>
+              <h2>
+                MotionIQ
+              </h2>
 
-          </div>
+              <p>
+                Student Portal
+              </p>
 
-        </div>
-
-        {/* NAVIGATION */}
-        <div className="nav-links">
-
-          <Link
-            to="/student-dashboard"
-            className="active-link"
-          >
-
-            <MdDashboard />
-
-            Dashboard
-
-          </Link>
-
-          <Link to="/videos">
-
-            <MdPlayCircle />
-
-            Video Library
-
-          </Link>
-
-          <Link to="/guided-questions">
-
-            <MdQuestionAnswer />
-
-            Questions
-
-          </Link>
-
-          <Link to="/discussion">
-
-            <MdForum />
-
-            Discussions
-
-          </Link>
-
-          <Link to="/reflections">
-
-            <MdNotes />
-
-            Reflections
-
-          </Link>
-
-        </div>
-
-        {/* PROFILE */}
-        <div className="profile-box">
-
-          <div className="profile-circle">
-
-            {userName
-              ?.charAt(0)
-              ?.toUpperCase()}
+            </div>
 
           </div>
 
-          <div>
+          {/* NAVIGATION */}
+          <div className="nav-links">
 
-            <h4>
-              {userName}
-            </h4>
+            <Link
+              to="/student-dashboard"
+              className="active-link"
+            >
 
-            <p>
-              {email}
-            </p>
+              <MdDashboard />
+
+              Dashboard
+
+            </Link>
+
+            <Link to="/videos">
+
+              <MdPlayCircle />
+
+              Video Library
+
+            </Link>
+
+            <Link to="/guided-questions">
+
+              <MdQuestionAnswer />
+
+              Questions
+
+            </Link>
+
+            <Link to="/discussion">
+
+              <MdForum />
+
+              Discussions
+
+            </Link>
+
+            <Link to="/reflections">
+
+              <MdNotes />
+
+              Reflections
+
+            </Link>
 
           </div>
 
         </div>
 
-      </div>
+        {/* PROFILE + LOGOUT */}
+        <div>
 
-      {/* =========================
-          MAIN CONTENT
-      ========================= */}
-      <div className="main-content">
+          <div className="profile-box">
 
-        {/* TOP */}
-        <div className="dashboard-top">
+            <div className="profile-circle">
 
-          <div>
+              {userName
+                ?.charAt(0)
+                ?.toUpperCase()}
 
-            <h1>
-              Welcome Back,
-              {" "}
-              {userName} 👋
-            </h1>
+            </div>
 
-            <p>
-              Logged in as {email}
-            </p>
+            <div>
+
+              <h4>
+                {userName}
+              </h4>
+
+              <p>
+                {email}
+              </p>
+
+            </div>
 
           </div>
 
+          {/* LOGOUT */}
           <button
             className="logout-btn"
             onClick={handleLogout}
@@ -269,6 +244,30 @@ const StudentDashboard = () => {
             Sign Out
 
           </button>
+
+        </div>
+
+      </div>
+
+      {/* MAIN CONTENT */}
+      <div className="main-content">
+
+        {/* TOP */}
+        <div className="dashboard-top">
+
+          <div>
+
+            <h1>
+              Welcome Back,
+              {" "}
+              {userName}
+            </h1>
+
+            <p>
+              Logged in as {email}
+            </p>
+
+          </div>
 
         </div>
 
@@ -344,9 +343,7 @@ const StudentDashboard = () => {
             <div>
 
               <h3>
-                {
-                  reflectionCount
-                }
+                {reflectionCount}
               </h3>
 
               <p>
@@ -416,21 +413,15 @@ const StudentDashboard = () => {
                   <div className="video-info">
 
                     <h4>
-                      {
-                        video.title
-                      }
+                      {video.title}
                     </h4>
 
                     <p>
-                      {
-                        video.description
-                      }
+                      {video.description}
                     </p>
 
                     <span>
-                      {
-                        video.faculty
-                      }
+                      {video.faculty}
                     </span>
 
                   </div>
