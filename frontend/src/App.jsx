@@ -10,7 +10,11 @@ import GuidedQuestions from "./pages/GuidedQuestions";
 import Reflection from "./pages/Reflection";  
 import Discussion from "./pages/Discussion";
 import LecturerDashboard from "./pages/LecturerDashboard";
-import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminVideoLibrary from "./pages/AdminVideoLibrary";  
+import AdminUploadVideo from "./pages/AdminUploadVideo";
+import AdminEditVideo from "./pages/AdminEditVideo";
 
 function App() {
   return (
@@ -25,7 +29,11 @@ function App() {
         <Route path="/reflections" element={<Reflection />} />
         <Route path="/discussion" element={<Discussion />} />
         <Route path="/lecturer-dashboard" element={<LecturerDashboard />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin-videos" element={<AdminVideoLibrary />} />
+        <Route path="/admin-upload" element={<AdminUploadVideo />} />
+        <Route path="/admin-edit-video" element={<AdminEditVideo />} />
 
 
       </Routes>

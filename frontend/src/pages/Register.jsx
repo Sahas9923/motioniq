@@ -1,179 +1,545 @@
+// Register.jsx
+
 import { useState } from "react";
+
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  MdPerson,
+  MdEmail,
+  MdLock,
+  MdSchool,
+  MdBadge,
+  MdArrowForward,
+} from "react-icons/md";
+
 import "../styles/Register.css";
-import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../services/authService";
+
+import {
+  registerStudent,
+  registerLecturer,
+} from "../services/authService";
 
 const Register = () => {
-  const [role, setRole] = useState("STUDENT");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [faculty, setFaculty] = useState("");
-  const [batch, setBatch] = useState("");
-  const [indexNumber, setIndexNumber] = useState("");
-  const [dob, setDob] = useState("");
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const handleRegister = async () => {
-    try {
-      if (!faculty) {
-        alert("Select faculty");
-        return;
+  /* ROLE */
+  const [role, setRole] =
+    useState("STUDENT");
+
+  /* COMMON */
+  const [fullName, setFullName] =
+    useState("");
+
+  const [email, setEmail] =
+    useState("");
+
+  const [password, setPassword] =
+    useState("");
+
+  const [faculty, setFaculty] =
+    useState("");
+
+  /* STUDENT */
+  const [batch, setBatch] =
+    useState("");
+
+  /* LECTURER */
+  const [staffId, setStaffId] =
+    useState("");
+
+  /* REGISTER */
+  const handleRegister =
+    async () => {
+
+      try {
+
+        /* VALIDATION */
+        if (
+          !fullName ||
+          !email ||
+          !password ||
+          !faculty
+        ) {
+
+          alert(
+            "Please fill all fields"
+          );
+
+          return;
+
+        }
+
+        /* STUDENT */
+        if (
+          role === "STUDENT"
+        ) {
+
+          if (!batch) {
+
+            alert(
+              "Please select batch"
+            );
+
+            return;
+
+          }
+
+          await registerStudent(
+
+            fullName,
+
+            email,
+
+            password,
+
+            faculty,
+
+            batch
+
+          );
+
+        }
+
+        /* LECTURER */
+        if (
+          role === "LECTURER"
+        ) {
+
+          if (!staffId) {
+
+            alert(
+              "Please enter staff ID"
+            );
+
+            return;
+
+          }
+
+          await registerLecturer(
+
+            fullName,
+
+            email,
+
+            password,
+
+            faculty,
+
+            staffId
+
+          );
+
+        }
+
+        alert(
+          "Registration Successful!"
+        );
+
+        navigate("/");
+
+      } catch (err) {
+
+        alert(err.message);
+
       }
 
-      if (role === "STUDENT") {
-        if (!batch) {
-          alert("Select batch");
-          return;
-        }
-        if (!indexNumber) {
-          alert("Enter index number");
-          return;
-        }
-      }
-
-      await registerUser(
-        email,
-        password,
-        role,
-        faculty,
-        batch,
-        indexNumber,
-        dob
-      );
-
-      alert("Account created!");
-
-      navigate(role === "STUDENT"
-        ? "/student-dashboard"
-        : "/lecturer-dashboard");
-
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+    };
 
   return (
-    <div className="login-container">
 
-      {/* LEFT PANEL */}
-      <div className="left-panel">
-        <div className="logo">
-          <div className="logo-box"></div>
-          <h2>MotionIQ</h2>
+    <div className="register-page">
+
+      {/* LEFT */}
+      <div className="register-left">
+
+        <div className="overlay"></div>
+
+        {/* BRAND */}
+        <div className="brand">
+
+          <div className="logo-circle">
+            🎬
+          </div>
+
+          <h2>
+            MotionIQ
+          </h2>
+
         </div>
 
-        <div className="left-content">
+        {/* HERO */}
+        <div className="hero-content">
+
+          <span className="tag">
+            CINEMA • EDUCATION • ANALYSIS
+          </span>
+
           <h1>
-            Join the Platform.
+            Join The Future
             <br />
-            <span>Start Your Journey.</span>
+            Of Film Learning
           </h1>
-          <p>Register for academic film analysis.</p>
+
+          <p>
+            MotionIQ helps students and
+            lecturers explore cinematic
+            storytelling, critical thinking,
+            guided analysis, discussions,
+            and reflections through
+            interactive learning.
+          </p>
+
+          {/* FEATURES */}
+          <div className="feature-list">
+
+            <div className="feature-card">
+
+              <h3>
+                🎥 Film Library
+              </h3>
+
+              <p>
+                Explore curated educational
+                films and visual media.
+              </p>
+
+            </div>
+
+            <div className="feature-card">
+
+              <h3>
+                🧠 Guided Analysis
+              </h3>
+
+              <p>
+                Learn with interactive
+                questions and activities.
+              </p>
+
+            </div>
+
+            <div className="feature-card">
+
+              <h3>
+                💬 Discussions
+              </h3>
+
+              <p>
+                Collaborate with students
+                and lecturers in real time.
+              </p>
+
+            </div>
+
+          </div>
+
         </div>
 
-        <div className="footer-text">
-          © 2026 MotionIQ Academic
-        </div>
       </div>
 
-      {/* RIGHT PANEL */}
-      <div className="right-panel">
-        <div className="login-box">
+      {/* RIGHT */}
+      <div className="register-right">
 
-          <h2>Create Account</h2>
+        <div className="register-card">
+
+          {/* TOP */}
+          <div className="card-top">
+
+            <h2>
+              Create Account
+            </h2>
+
+            <p>
+              Register to continue your
+              MotionIQ journey
+            </p>
+
+          </div>
 
           {/* ROLE SWITCH */}
           <div className="role-switch">
-            <button
-              className={role === "STUDENT" ? "active" : ""}
-              onClick={() => setRole("STUDENT")}
-            >
-              Student
-            </button>
 
             <button
-              className={role === "LECTURER" ? "active" : ""}
+              className={
+                role === "STUDENT"
+                  ? "active"
+                  : ""
+              }
               onClick={() => {
-                setRole("LECTURER");
-                setBatch("");
-                setIndexNumber("");
+
+                setRole(
+                  "STUDENT"
+                );
+
               }}
             >
-              Lecturer
+
+              Student
+
             </button>
+
+            <button
+              className={
+                role === "LECTURER"
+                  ? "active"
+                  : ""
+              }
+              onClick={() => {
+
+                setRole(
+                  "LECTURER"
+                );
+
+              }}
+            >
+
+              Lecturer
+
+            </button>
+
           </div>
 
-          {/* FORM GRID */}
-          <div className="form-grid">
+          {/* FULL NAME */}
+          <div className="input-group">
 
-            {/* Faculty */}
-            <div className="form-group">
-              <label>Faculty</label>
-              <select onChange={(e) => setFaculty(e.target.value)}>
-                <option value="">Select Faculty</option>
-                <option>School of Computing</option>
-                <option>School of Engineering</option>
-                <option>School of Design</option>
-                <option>School of Business</option>
+            <label>
+              Full Name
+            </label>
+
+            <div className="input-box">
+
+              <MdPerson className="input-icon" />
+
+              <input
+                type="text"
+                placeholder="Enter your full name"
+                value={fullName}
+                onChange={(e) =>
+                  setFullName(
+                    e.target.value
+                  )
+                }
+              />
+
+            </div>
+
+          </div>
+
+          {/* FACULTY */}
+          <div className="input-group">
+
+            <label>
+              Faculty
+            </label>
+
+            <div className="input-box">
+
+              <MdSchool className="input-icon" />
+
+              <select
+                value={faculty}
+                onChange={(e) =>
+                  setFaculty(
+                    e.target.value
+                  )
+                }
+              >
+
+                <option value="">
+                  Select Faculty
+                </option>
+
+                <option>
+                  School of Computing
+                </option>
+
+                <option>
+                  School of Business
+                </option>
+
+                <option>
+                  School of Engineering
+                </option>
+
+                <option>
+                  School of Design
+                </option>
+
               </select>
-            </div>
 
-            {/* DOB */}
-            <div className="form-group">
-              <label>Date of Birth</label>
-              <input type="date" onChange={(e) => setDob(e.target.value)} />
-            </div>
-
-            {/* STUDENT ONLY */}
-            {role === "STUDENT" && (
-              <>
-                <div className="form-group">
-                  <label>Batch</label>
-                  <select onChange={(e) => setBatch(e.target.value)}>
-                    <option value="">Select Batch</option>
-                    <option>2022</option>
-                    <option>2023</option>
-                    <option>2024</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Index Number</label>
-                  <input type="text" onChange={(e) => setIndexNumber(e.target.value)} />
-                </div>
-              </>
-            )}
-
-            {/* Email FULL */}
-            <div className="form-group full-width">
-              <label>Email</label>
-              <input type="email" onChange={(e) => setEmail(e.target.value)} />
-            </div>
-
-            {/* Password FULL */}
-            <div className="form-group full-width">
-              <label>Password</label>
-              <input type="password" onChange={(e) => setPassword(e.target.value)} />
             </div>
 
           </div>
 
-          <button className="login-btn" onClick={handleRegister}>
-            Register
+          {/* STUDENT BATCH */}
+          {role === "STUDENT" && (
+
+            <div className="input-group">
+
+              <label>
+                Batch
+              </label>
+
+              <div className="input-box">
+
+                <MdBadge className="input-icon" />
+
+                <select
+                  value={batch}
+                  onChange={(e) =>
+                    setBatch(
+                      e.target.value
+                    )
+                  }
+                >
+
+                  <option value="">
+                    Select Batch
+                  </option>
+
+                  <option>
+                    2022
+                  </option>
+
+                  <option>
+                    2023
+                  </option>
+
+                  <option>
+                    2024
+                  </option>
+
+                  <option>
+                    2025
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+          )}
+
+          {/* LECTURER STAFF ID */}
+          {role === "LECTURER" && (
+
+            <div className="input-group">
+
+              <label>
+                Staff ID
+              </label>
+
+              <div className="input-box">
+
+                <MdBadge className="input-icon" />
+
+                <input
+                  type="text"
+                  placeholder="Enter your staff ID"
+                  value={staffId}
+                  onChange={(e) =>
+                    setStaffId(
+                      e.target.value
+                    )
+                  }
+                />
+
+              </div>
+
+            </div>
+
+          )}
+
+          {/* EMAIL */}
+          <div className="input-group">
+
+            <label>
+              Email Address
+            </label>
+
+            <div className="input-box">
+
+              <MdEmail className="input-icon" />
+
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) =>
+                  setEmail(
+                    e.target.value
+                  )
+                }
+              />
+
+            </div>
+
+          </div>
+
+          {/* PASSWORD */}
+          <div className="input-group">
+
+            <label>
+              Password
+            </label>
+
+            <div className="input-box">
+
+              <MdLock className="input-icon" />
+
+              <input
+                type="password"
+                placeholder="Create password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+              />
+
+            </div>
+
+          </div>
+
+          {/* BUTTON */}
+          <button
+            className="register-btn"
+            onClick={handleRegister}
+          >
+
+            Create Account
+
+            <MdArrowForward />
+
           </button>
 
+          {/* LOGIN */}
           <div className="bottom-text">
-            Already have an account?{" "}
-            <Link to="/" className="link-style">
+
+            Already have an account?
+
+            <Link to="/">
               Login
             </Link>
+
           </div>
 
         </div>
+
       </div>
+
     </div>
+
   );
+
 };
 
 export default Register;
