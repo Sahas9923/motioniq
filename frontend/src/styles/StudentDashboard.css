@@ -23,38 +23,52 @@ body{
   overflow-x:hidden;
 }
 
-/* PAGE */
+/* =========================
+   PAGE
+========================= */
 .dashboard-page{
   min-height:100vh;
+  width:100%;
+
   display:flex;
+
   background:#020617;
 }
 
 /* =========================
-   SIDEBAR
+   DARK SIDEBAR
 ========================= */
 .sidebar{
   width:290px;
-  min-height:100vh;
 
-  background:#0f172a;
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+
+  background:
+    linear-gradient(
+      180deg,
+      #0f172a 0%,
+      #111827 100%
+    );
 
   border-right:
     1px solid rgba(255,255,255,0.06);
 
   padding:28px 22px;
 
-  position:fixed;
-  left:0;
-  top:0;
-
   display:flex;
   flex-direction:column;
   justify-content:space-between;
 
-  overflow:hidden;
+  overflow-y:auto;
+  overflow-x:hidden;
 
-  z-index:100;
+  z-index:999;
+
+  box-shadow:
+    10px 0 40px rgba(0,0,0,0.35);
 }
 
 /* LOGO */
@@ -101,7 +115,9 @@ body{
   margin-top:4px;
 }
 
-/* NAVIGATION */
+/* =========================
+   NAVIGATION
+========================= */
 .nav-links{
   display:flex;
   flex-direction:column;
@@ -128,16 +144,17 @@ body{
   font-size:15px;
   font-weight:600;
 
-  transition:0.3s;
+  transition:0.3s ease;
 }
 
 .nav-links a svg{
   font-size:22px;
 }
 
+/* HOVER */
 .nav-links a:hover{
   background:
-    rgba(99,102,241,0.12);
+    rgba(99,102,241,0.14);
 
   color:white;
 
@@ -160,7 +177,9 @@ body{
     0 10px 25px rgba(99,102,241,0.35);
 }
 
-/* PROFILE */
+/* =========================
+   PROFILE
+========================= */
 .profile-box{
   display:flex;
   align-items:center;
@@ -175,6 +194,8 @@ body{
   padding:18px;
 
   border-radius:22px;
+
+  backdrop-filter:blur(10px);
 }
 
 .profile-circle{
@@ -219,14 +240,20 @@ body{
 
   margin-left:290px;
 
+  width:calc(100% - 290px);
+
   padding:35px;
 
   min-height:100vh;
 
   background:#020617;
+
+  overflow-x:hidden;
 }
 
-/* TOP */
+/* =========================
+   TOP
+========================= */
 .dashboard-top{
   display:flex;
   align-items:center;
@@ -457,7 +484,9 @@ body{
   font-size:14px;
 }
 
-/* VIDEO GRID */
+/* =========================
+   VIDEO GRID
+========================= */
 .video-grid{
   display:grid;
 
@@ -563,6 +592,7 @@ body{
 
   .main-content{
     margin-left:0;
+    width:100%;
   }
 
   .video-grid{
