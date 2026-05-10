@@ -1,170 +1,658 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import {
   MdDashboard,
-  MdPlayCircle,
+  MdVideoLibrary,
+  MdSearch,
+  MdMovie,
+  MdForum,
   MdQuestionAnswer,
   MdNotes,
-  MdForum,
-  MdFeedback,
-  MdPerson,
-  MdSettings,
+  MdLogout,
+  MdAccessTime,
+  MdOutlineNotes,
+  MdSend,
+  MdClose,
 } from "react-icons/md";
 
-// images
-import img1 from "../assets/1.png";
-import img2 from "../assets/2.png";
-import img3 from "../assets/3.png";
-import img4 from "../assets/4.jpg";
-import img5 from "../assets/5.png";
-import img6 from "../assets/6.jpg";
-import img7 from "../assets/7.png";
-import img8 from "../assets/8.jpg";
-import img9 from "../assets/9.jpg";
-import boy from "../assets/boy.jpg";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
-const videos = [
-  { img: img1, title: "The Minute", category: "SHORT FILM" },
-  { img: img2, title: "Office Situation Gone Wrong", category: "COMEDY" },
-  { img: img3, title: "A Simple Choice", category: "SHORT CLIP" },
-  { img: img4, title: "Misunderstood Conversation", category: "SOCIAL" },
-  { img: img5, title: "The Hidden Message", category: "SHORT FILM" },
-  { img: img6, title: "Why Did He Do That?", category: "DRAMA" },
-  { img: img7, title: "Different Point of View", category: "SOCIAL" },
-  { img: img8, title: "Right or Wrong?", category: "SHORT CLIP" },
-  { img: img9, title: "Funny but True", category: "COMEDY" },
-];
+import { db } from "../services/firebase";
+
+import "../styles/Reflection.css";
 
 const Reflection = () => {
 
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [reflection, setReflection] = useState("");
+  const navigate =
+    useNavigate();
 
-  const openModal = (video) => {
-    setSelectedVideo(video);
-    setShowModal(true);
-    setReflection("");
-  };
+  const [videos, setVideos] =
+    useState([]);
 
-  const handleSubmit = () => {
-    console.log("Reflection:", reflection);
-    alert("Reflection submitted!");
-    setShowModal(false);
-  };
+  const [search, setSearch] =
+    useState("");
 
-  const navigate = useNavigate();
-    const [showSettings, setShowSettings] = useState(false);
-  
-     const handleLogout = () => {
-    localStorage.clear(); // optional
-    navigate("/"); // redirect to login
+  const [selectedVideo, setSelectedVideo] =
+    useState(null);
+
+  const [showPopup, setShowPopup] =
+    useState(false);
+
+  const [reflection, setReflection] =
+    useState("");
+
+  const [videoReflections, setVideoReflections] =
+    useState([]);
+
+  /* USER */
+  const userName =
+    localStorage.getItem(
+      "fullName"
+    ) || "Student";
+
+  const email =
+    localStorage.getItem(
+      "userEmail"
+    ) || "";
+
+  /* LOAD VIDEOS */
+  useEffect(() => {
+
+    fetchVideos();
+
+  }, []);
+
+  /* FETCH VIDEOS */
+  const fetchVideos =
+    async () => {
+
+      try {
+
+        const querySnapshot =
+          await getDocs(
+            collection(
+              db,
+              "videos"
+            )
+          );
+
+        const data =
+          querySnapshot.docs.map(
+            (doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })
+          );
+
+        setVideos(data);
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    };
+
+  /* OPEN REFLECTION */
+  const openReflection =
+    async (video) => {
+
+      setSelectedVideo(video);
+
+      setShowPopup(true);
+
+      fetchReflections(
+        video.id
+      );
+
+    };
+
+  /* FETCH REFLECTIONS */
+  const fetchReflections =
+    async (videoId) => {
+
+      try {
+
+        const q = query(
+          collection(
+            db,
+            "reflections"
+          ),
+          where(
+            "videoId",
+            "==",
+            videoId
+          )
+        );
+
+        const querySnapshot =
+          await getDocs(q);
+
+        const data =
+          querySnapshot.docs.map(
+            (doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })
+          );
+
+        setVideoReflections(data);
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    };
+
+  /* SAVE REFLECTION */
+  const handleSaveReflection =
+    async () => {
+
+      if (!reflection) {
+
+        alert(
+          "Please enter reflection"
+        );
+
+        return;
+
+      }
+
+      try {
+
+        await addDoc(
+          collection(
+            db,
+            "reflections"
+          ),
+          {
+            videoId:
+              selectedVideo.id,
+
+            videoTitle:
+              selectedVideo.title,
+
+            reflection,
+
+            userName,
+
+            createdAt:
+              serverTimestamp(),
+          }
+        );
+
+        setReflection("");
+
+        fetchReflections(
+          selectedVideo.id
+        );
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    };
+
+  /* FILTER */
+  const filteredVideos =
+    videos.filter((video) =>
+      video.title
+        ?.toLowerCase()
+        .includes(
+          search.toLowerCase()
+        )
+    );
+
+  /* LOGOUT */
+  const handleLogout =
+    () => {
+
+      localStorage.clear();
+
+      navigate("/");
+
     };
 
   return (
-    <div className="dashboard">
+
+    <div className="student-library-page">
 
       {/* SIDEBAR */}
-      <div className="sidebar">
-        <h2 className="logo">🎬 MotionIQ</h2>
-        <p className="portal">Student Portal</p>
+      <div className="student-sidebar">
 
-        <ul className="menu">
-          <li><Link to="/student-dashboard"><MdDashboard /> Dashboard</Link></li>
-          <li><Link to="/videos"><MdPlayCircle /> Videos</Link></li>
-          <li><Link to="/guided-questions"><MdQuestionAnswer /> Guided Questions</Link></li>
-          <li className="active"><MdNotes /> Reflections</li>
-          <li><Link to="/discussion"><MdForum /> Discussion</Link></li>
-          <li><MdFeedback /> Feedback</li>
-        </ul>
+        <div>
 
-        <div className="bottom-menu">
-  <p><MdPerson /> Profile</p>
+          {/* LOGO */}
+          <div className="student-sidebar-logo">
 
-  <div className="settings-container">
-    <p onClick={() => setShowSettings(!showSettings)}>
-      <MdSettings /> Settings
-    </p>
-
-    {showSettings && (
-      <div className="settings-dropdown">
-        <button onClick={handleLogout}>Logout</button>
+            <div className="logo-icon">
+              🎬
             </div>
-            )}
-        </div>
-    </div>
 
-        <div className="premium">
-          <p className="premium-title">Premium Access</p>
-          <p>Unlock advanced tools.</p>
-          <button>Upgrade Now</button>
+            <div>
+
+              <h2>
+                MotionIQ
+              </h2>
+
+              <p>
+                Student Portal
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* NAVIGATION */}
+          <div className="student-nav-links">
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/student-dashboard"
+                )
+              }
+            >
+
+              <MdDashboard />
+
+              Dashboard
+
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/videos"
+                )
+              }
+            >
+
+              <MdVideoLibrary />
+
+              Video Library
+
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/guided-questions"
+                )
+              }
+            >
+
+              <MdQuestionAnswer />
+
+              Questions
+
+            </button>
+
+            <button className="active-link">
+
+              <MdNotes />
+
+              Reflections
+
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/discussion"
+                )
+              }
+            >
+
+              <MdForum />
+
+              Discussions
+
+            </button>
+
+          </div>
+
         </div>
+
+        {/* PROFILE */}
+        <div>
+
+          <div className="student-profile-box">
+
+            <div className="profile-circle">
+
+              {userName
+                ?.charAt(0)
+                ?.toUpperCase()}
+
+            </div>
+
+            <div>
+
+              <h4>
+                {userName}
+              </h4>
+
+              <p>
+                {email}
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* LOGOUT */}
+          <button
+            className="logout-btn"
+            onClick={handleLogout}
+          >
+
+            <MdLogout />
+
+            Logout
+
+          </button>
+
+        </div>
+
       </div>
 
       {/* MAIN */}
-      <div className="main">
+      <div className="student-library-main">
 
-         {/* HEADER */}
-                <div className="header">
-                  <input type="text" placeholder="Search..." />
-                  <div className="profile">
-                    <div>
-                      <h4>Alex Rivera</h4>
-                      <p>Student ID: #8291</p>
-                    </div>
-                    <img src={boy} alt="" />
-                  </div>
+        {/* TOP */}
+        <div className="library-top">
+
+          <div>
+
+            <h1>
+              Reflections
+            </h1>
+
+            <p>
+              Read and share reflections from videos
+            </p>
+
+          </div>
+
+        </div>
+
+        {/* SEARCH */}
+        <div className="filter-bar">
+
+          <div className="search-box">
+
+            <MdSearch className="search-icon" />
+
+            <input
+              type="text"
+              placeholder="Search videos..."
+              value={search}
+              onChange={(e) =>
+                setSearch(
+                  e.target.value
+                )
+              }
+            />
+
+          </div>
+
+        </div>
+
+        {/* VIDEOS */}
+        <div className="student-video-grid">
+
+          {filteredVideos.map(
+            (video) => (
+
+              <div
+                className="student-video-card"
+                key={video.id}
+              >
+
+                {/* IMAGE */}
+                <div className="video-image-wrapper">
+
+                  <img
+                    src={
+                      video.imageURL
+                    }
+                    alt={
+                      video.title
+                    }
+                    className="student-video-image"
+                  />
+
                 </div>
 
-        <h1>Reflections</h1>
+                {/* CONTENT */}
+                <div className="student-video-content">
 
-        {/* VIDEO LIST */}
-        <div className="video-list">
-          {videos.map((video, index) => (
-            <div className="video-item" key={index}>
+                  <div className="student-video-top">
 
-              <img src={video.img} alt="" />
+                    <div>
 
-              <div className="info">
-                <h3>{video.title}</h3>
-                <p>{video.category}</p>
+                      <h3>
+                        {
+                          video.title
+                        }
+                      </h3>
+
+                      <span>
+                        {
+                          video.faculty
+                        }
+                      </span>
+
+                    </div>
+
+                    <div className="video-badge">
+
+                      <MdMovie />
+
+                      {
+                        video.videoType
+                      }
+
+                    </div>
+
+                  </div>
+
+                  <p>
+                    {
+                      video.description
+                    }
+                  </p>
+
+                  <div className="video-meta">
+
+                    <div>
+
+                      <MdAccessTime />
+
+                      45 mins
+
+                    </div>
+
+                  </div>
+
+                  {/* BUTTON */}
+                  <div className="student-actions">
+
+                    <button
+                      className="watch-btn"
+                      onClick={() =>
+                        openReflection(
+                          video
+                        )
+                      }
+                    >
+
+                      <MdOutlineNotes />
+
+                      Open Reflections
+
+                    </button>
+
+                  </div>
+
+                </div>
+
               </div>
 
-              <button onClick={() => openModal(video)}>
-                Reflect
+            )
+          )}
+
+        </div>
+
+      </div>
+
+      {/* REFLECTION POPUP */}
+      {showPopup && (
+
+        <div className="popup-overlay">
+
+          <div className="reflection-popup">
+
+            {/* TOP */}
+            <div className="popup-top">
+
+              <div>
+
+                <h2>
+                  {
+                    selectedVideo?.title
+                  }
+                </h2>
+
+                <p>
+                  Student Reflections
+                </p>
+
+              </div>
+
+              {/* CLOSE */}
+              <button
+                className="close-popup-btn"
+                onClick={() =>
+                  setShowPopup(false)
+                }
+              >
+
+                <MdClose />
+
               </button>
 
             </div>
-          ))}
-        </div>
 
-        {/* MODAL */}
-        {showModal && (
-          <div className="modal">
-            <div className="modal-content">
+            {/* LIST */}
+            <div className="reflection-list">
 
-              <h2>{selectedVideo.title}</h2>
+              {videoReflections.length > 0 ? (
 
-              <textarea
-                placeholder="Write your reflection here..."
-                value={reflection}
-                onChange={(e) => setReflection(e.target.value)}
-              />
+                videoReflections.map(
+                  (item) => (
 
-              <div className="modal-actions">
-                <button onClick={() => setShowModal(false)}>Close</button>
-                <button onClick={handleSubmit}>Submit</button>
-              </div>
+                    <div
+                      className="reflection-item"
+                      key={item.id}
+                    >
+
+                      {/* AVATAR */}
+                      <div className="reflection-avatar">
+
+                        {item.userName
+                          ?.charAt(0)
+                          ?.toUpperCase() || "S"}
+
+                      </div>
+
+                      {/* CONTENT */}
+                      <div className="reflection-content">
+
+                        <h4>
+                          {item.userName}
+                        </h4>
+
+                        <p>
+                          {item.reflection}
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  )
+                )
+
+              ) : (
+
+                <div className="empty-box">
+
+                  No reflections yet.
+
+                </div>
+
+              )}
 
             </div>
-          </div>
-        )}
 
-      </div>
+            {/* ADD */}
+            <div className="add-reflection-box">
+
+              <h3>
+                Add Your Reflection
+              </h3>
+
+              <textarea
+                placeholder="Write your reflection..."
+                value={reflection}
+                onChange={(e) =>
+                  setReflection(
+                    e.target.value
+                  )
+                }
+              ></textarea>
+
+              <button
+                className="submit-reflection-btn"
+                onClick={
+                  handleSaveReflection
+                }
+              >
+
+                <MdSend />
+
+                Submit Reflection
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
+
     </div>
+
   );
+
 };
 
 export default Reflection;

@@ -26,7 +26,8 @@ import "../styles/VideoLibrary.css";
 
 const StudentVideoLibrary = () => {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const [videos, setVideos] =
     useState([]);
@@ -196,19 +197,6 @@ const StudentVideoLibrary = () => {
 
             </button>
 
-            <button
-              onClick={() =>
-                navigate(
-                  "/discussion"
-                )
-              }
-            >
-
-              <MdForum />
-
-              Discussions
-
-            </button>
 
             <button
               onClick={() =>
@@ -221,6 +209,20 @@ const StudentVideoLibrary = () => {
               <MdNotes />
 
               Reflections
+
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/discussion"
+                )
+              }
+            >
+
+              <MdForum />
+
+              Discussions
 
             </button>
 
@@ -443,19 +445,37 @@ const StudentVideoLibrary = () => {
                     <button
                       className="watch-btn"
                       onClick={() =>
+
                         navigate(
                           "/player",
                           {
                             state:{
+
+                              id:
+                                video.id,
+
                               videoURL:
                                 video.videoURL,
+
+                              videoType:
+                                video.videoType,
+
                               title:
                                 video.title,
+
                               description:
                                 video.description,
+
+                              faculty:
+                                video.faculty,
+
+                              imageURL:
+                                video.imageURL,
+
                             },
                           }
                         )
+
                       }
                     >
 

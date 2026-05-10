@@ -38,7 +38,7 @@ const AdminEditVideo = () => {
   const video =
     location.state?.video;
 
-  /* VIDEO STATES */
+  /* VIDEO */
   const [title, setTitle] =
     useState(video?.title || "");
 
@@ -75,9 +75,6 @@ const AdminEditVideo = () => {
   const [option4, setOption4] =
     useState("");
 
-  const [correctAnswer, setCorrectAnswer] =
-    useState("");
-
   /* LOAD QUESTIONS */
   useEffect(() => {
 
@@ -85,33 +82,44 @@ const AdminEditVideo = () => {
 
   }, []);
 
-  const fetchQuestions = async () => {
+  /* FETCH */
+  const fetchQuestions =
+    async () => {
 
-    try {
+      try {
 
-      const q = query(
-        collection(db, "guidedQuestions"),
-        where("videoId", "==", video.id)
-      );
+        const q = query(
+          collection(
+            db,
+            "guidedQuestions"
+          ),
+          where(
+            "videoId",
+            "==",
+            video.id
+          )
+        );
 
-      const querySnapshot =
-        await getDocs(q);
+        const querySnapshot =
+          await getDocs(q);
 
-      const data =
-        querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const data =
+          querySnapshot.docs.map(
+            (doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })
+          );
 
-      setQuestions(data);
+        setQuestions(data);
 
-    } catch (err) {
+      } catch (err) {
 
-      console.log(err);
+        console.log(err);
 
-    }
+      }
 
-  };
+    };
 
   /* UPDATE VIDEO */
   const handleUpdateVideo =
@@ -120,7 +128,11 @@ const AdminEditVideo = () => {
       try {
 
         await updateDoc(
-          doc(db, "videos", video.id),
+          doc(
+            db,
+            "videos",
+            video.id
+          ),
           {
             title,
             description,
@@ -130,13 +142,17 @@ const AdminEditVideo = () => {
           }
         );
 
-        alert("Video Updated!");
+        alert(
+          "Video Updated!"
+        );
 
       } catch (err) {
 
         console.log(err);
 
-        alert("Update Failed");
+        alert(
+          "Update Failed"
+        );
 
       }
 
@@ -151,11 +167,12 @@ const AdminEditVideo = () => {
         !option1 ||
         !option2 ||
         !option3 ||
-        !option4 ||
-        !correctAnswer
+        !option4
       ) {
 
-        alert("Complete all fields");
+        alert(
+          "Complete all fields"
+        );
 
         return;
 
@@ -182,9 +199,8 @@ const AdminEditVideo = () => {
               option4,
             ],
 
-            correctAnswer,
-
-            createdAt: new Date(),
+            createdAt:
+              new Date(),
           }
         );
 
@@ -193,7 +209,6 @@ const AdminEditVideo = () => {
         setOption2("");
         setOption3("");
         setOption4("");
-        setCorrectAnswer("");
 
         fetchQuestions();
 
@@ -205,7 +220,7 @@ const AdminEditVideo = () => {
 
     };
 
-  /* DELETE QUESTION */
+  /* DELETE */
   const handleDeleteQuestion =
     async (id) => {
 
@@ -243,7 +258,7 @@ const AdminEditVideo = () => {
           </h1>
 
           <p>
-            Manage video information
+            Manage video details
             and guided questions
           </p>
 
@@ -252,7 +267,9 @@ const AdminEditVideo = () => {
         <button
           className="back-btn"
           onClick={() =>
-            navigate("/admin-videos")
+            navigate(
+              "/admin-videos"
+            )
           }
         >
 
@@ -270,7 +287,7 @@ const AdminEditVideo = () => {
         {/* LEFT */}
         <div className="left-section">
 
-          {/* VIDEO INFO */}
+          {/* VIDEO */}
           <div className="edit-card">
 
             <h2>
@@ -402,7 +419,7 @@ const AdminEditVideo = () => {
           <div className="edit-card">
 
             <h2>
-              Add New Question
+              Add Guided Question
             </h2>
 
             <div className="form-group">
@@ -470,45 +487,6 @@ const AdminEditVideo = () => {
 
             </div>
 
-            <div className="form-group">
-
-              <label>
-                Correct Answer
-              </label>
-
-              <select
-                value={correctAnswer}
-                onChange={(e) =>
-                  setCorrectAnswer(
-                    e.target.value
-                  )
-                }
-              >
-
-                <option value="">
-                  Select Correct Answer
-                </option>
-
-                <option>
-                  {option1}
-                </option>
-
-                <option>
-                  {option2}
-                </option>
-
-                <option>
-                  {option3}
-                </option>
-
-                <option>
-                  {option4}
-                </option>
-
-              </select>
-
-            </div>
-
             <button
               className="add-btn"
               onClick={
@@ -565,21 +543,13 @@ const AdminEditVideo = () => {
 
                 <ul>
 
-                  {q.answers.map(
+                  {q.answers?.map(
                     (
                       answer,
                       index
                     ) => (
 
-                      <li
-                        key={index}
-                        className={
-                          answer ===
-                          q.correctAnswer
-                            ? "correct"
-                            : ""
-                        }
-                      >
+                      <li key={index}>
 
                         {answer}
 

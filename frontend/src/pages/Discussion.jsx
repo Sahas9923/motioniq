@@ -1,274 +1,611 @@
-import React, { useState } from "react";
-import "../styles/Discussion.css";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
+import { useNavigate } from "react-router-dom";
 
 import {
   MdDashboard,
-  MdPlayCircle,
+  MdVideoLibrary,
+  MdForum,
   MdQuestionAnswer,
   MdNotes,
-  MdForum,
-  MdFeedback,
-  MdPerson,
-  MdSettings,
+  MdLogout,
+  MdSend,
+  MdMovie,
 } from "react-icons/md";
 
-import img1 from "../assets/1.png";
-import img2 from "../assets/2.png";
-import img3 from "../assets/3.png";
-import boy from "../assets/boy.jpg";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
+
+import { db } from "../services/firebase";
+
+import "../styles/Discussion.css";
 
 const Discussion = () => {
 
-  // ✅ Approved discussions (visible)
-  const [approved, setApproved] = useState([
-    {
-      img: img1,
-      title: "The Minute",
-      category: "SHORT FILM",
-      messages: [{ user: "John", text: "Interesting decisions!" }]
-    },
-    {
-      img: img2,
-      title: "Office Situation",
-      category: "COMEDY",
-      messages: [{ user: "Sara", text: "Very realistic!" }]
-    }
-  ]);
+  const navigate =
+    useNavigate();
 
-  // ❗ Pending (not visible)
-  const [pending, setPending] = useState([]);
+  const [videos, setVideos] =
+    useState([]);
 
-  const [showCreate, setShowCreate] = useState(false);
-  const [newTopic, setNewTopic] = useState("");
+  const [messages, setMessages] =
+    useState([]);
 
-  const [selected, setSelected] = useState(null);
-  const [showChat, setShowChat] = useState(false);
-  const [newMessage, setNewMessage] = useState("");
+  const [message, setMessage] =
+    useState("");
 
-  const [showSettings, setShowSettings] = useState(false);
-  const navigate = useNavigate();
+  const [selectedVideo, setSelectedVideo] =
+    useState(null);
 
-  // 🔥 CREATE → SEND TO ADMIN
-  const createDiscussion = () => {
-    if (!newTopic.trim()) return;
+  /* USER */
+  const userName =
+    localStorage.getItem(
+      "fullName"
+    ) || "Student";
 
-    const request = {
-      img: img3,
-      title: newTopic,
-      category: "PENDING",
-      messages: []
+  const email =
+    localStorage.getItem(
+      "userEmail"
+    ) || "";
+
+  /* LOAD */
+  useEffect(() => {
+
+    fetchVideos();
+
+    fetchMessages();
+
+  }, []);
+
+  /* FETCH VIDEOS */
+  const fetchVideos =
+    async () => {
+
+      try {
+
+        const querySnapshot =
+          await getDocs(
+            collection(
+              db,
+              "videos"
+            )
+          );
+
+        const data =
+          querySnapshot.docs.map(
+            (doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })
+          );
+
+        setVideos(data);
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
     };
 
-    setPending([...pending, request]);
-    setNewTopic("");
-    setShowCreate(false);
+  /* FETCH MESSAGES */
+  const fetchMessages =
+    async () => {
 
-    alert("Request sent to administrator for approval");
-  };
+      try {
 
-  // 🔥 SIMULATE ADMIN APPROVAL (for demo)
-  const approveDiscussion = (index) => {
-    const approvedItem = pending[index];
+        const querySnapshot =
+          await getDocs(
+            collection(
+              db,
+              "discussions"
+            )
+          );
 
-    setApproved([approvedItem, ...approved]);
-    setPending(pending.filter((_, i) => i !== index));
-  };
+        const data =
+          querySnapshot.docs.map(
+            (doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })
+          );
 
-  // CHAT
-  const openChat = (item) => {
-    setSelected(item);
-    setShowChat(true);
-  };
+        /* SORT */
+        data.sort(
+          (a, b) => {
 
-  const sendMessage = () => {
-    if (!newMessage.trim()) return;
+            const timeA =
+              a.createdAt
+                ?.seconds || 0;
 
-    const updated = {
-      ...selected,
-      messages: [...selected.messages, { user: "You", text: newMessage }]
+            const timeB =
+              b.createdAt
+                ?.seconds || 0;
+
+            return timeA - timeB;
+
+          }
+        );
+
+        setMessages(data);
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
     };
 
-    setSelected(updated);
-    setNewMessage("");
-  };
+  /* SEND */
+  const sendMessage =
+    async () => {
 
-  
-  const handleLogout = () => {
-  // optional: clear data
-  localStorage.clear();
+      if (
+        !message.trim() ||
+        !selectedVideo
+      ) {
 
-  navigate("/"); // go to login page
-};
+        return;
+
+      }
+
+      try {
+
+        /* SAVE */
+        await addDoc(
+          collection(
+            db,
+            "discussions"
+          ),
+          {
+            userName,
+
+            email,
+
+            message,
+
+            videoId:
+              selectedVideo.id,
+
+            videoTitle:
+              selectedVideo.title,
+
+            videoImage:
+              selectedVideo.imageURL,
+
+            faculty:
+              selectedVideo.faculty,
+
+            createdAt:
+              serverTimestamp(),
+          }
+        );
+
+        /* CLEAR */
+        setMessage("");
+
+        /* REFRESH */
+        fetchMessages();
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    };
+
+  /* LOGOUT */
+  const handleLogout =
+    () => {
+
+      localStorage.clear();
+
+      navigate("/");
+
+    };
 
   return (
-    <div className="dashboard">
+
+    <div className="discussion-page">
 
       {/* SIDEBAR */}
-      <div className="sidebar">
-        <h2 className="logo">🎬 MotionIQ</h2>
-        <p className="portal">Student Portal</p>
+      <div className="student-sidebar">
 
+        <div>
 
-        <ul className="menu">
-          <li><Link to="/student-dashboard"><MdDashboard /> Dashboard</Link></li>
-          <li><Link to="/videos"><MdPlayCircle /> Videos</Link></li>
-          <li><Link to="/guided-questions"><MdQuestionAnswer /> Guided Questions</Link></li>
-          <li><Link to="/reflections"><MdNotes /> Reflections</Link></li>
-          <li className="active"><MdForum /> Discussion</li>
-          <li><MdFeedback /> Feedback</li>
-        </ul>
+          {/* LOGO */}
+          <div className="student-sidebar-logo">
 
-           <div className="bottom-menu">
-           <p><MdPerson /> Profile</p>
-           <div className="settings-container">
-                <p onClick={() => setShowSettings(!showSettings)}>
-                    <MdSettings /> Settings
-                </p>
-
-                {showSettings && (
-                    <div className="settings-dropdown">
-                    <button onClick={handleLogout}>Logout</button>
-                    </div>
-                )}
-                </div>
-           </div>
-           
-            <div className="premium">
-            <p className="premium-title">Premium Access</p>
-            <p>Unlock advanced tools.</p>
-            <button>Upgrade Now</button>
+            <div className="logo-icon">
+              🎬
             </div>
+
+            <div>
+
+              <h2>
+                MotionIQ
+              </h2>
+
+              <p>
+                Student Portal
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* NAV */}
+          <div className="student-nav-links">
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/student-dashboard"
+                )
+              }
+            >
+
+              <MdDashboard />
+
+              Dashboard
+
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/video-library"
+                )
+              }
+            >
+
+              <MdVideoLibrary />
+
+              Video Library
+
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/guided-questions"
+                )
+              }
+            >
+
+              <MdQuestionAnswer />
+
+              Questions
+
+            </button>
+
+            <button
+              onClick={() =>
+                navigate(
+                  "/reflections"
+                )
+              }
+            >
+
+              <MdNotes />
+
+              Reflections
+
+            </button>
+
+            <button className="active-link">
+
+              <MdForum />
+
+              Discussions
+
+            </button>
+
+          </div>
+
+        </div>
+
+        {/* PROFILE */}
+        <div>
+
+          <div className="student-profile-box">
+
+            <div className="profile-circle">
+
+              {userName
+                ?.charAt(0)
+                ?.toUpperCase()}
+
+            </div>
+
+            <div>
+
+              <h4>
+                {userName}
+              </h4>
+
+              <p>
+                {email}
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* LOGOUT */}
+          <button
+            className="logout-btn"
+            onClick={handleLogout}
+          >
+
+            <MdLogout />
+
+            Logout
+
+          </button>
+
+        </div>
+
       </div>
 
       {/* MAIN */}
-      <div className="main">
+      <div className="discussion-main">
 
-        {/* HEADER */}
-                <div className="header">
-                  <input placeholder="Search lessons, films, or feedback..." />
-        
-                  <div className="profile">
-                    <div>
-                      <h4>Alex Rivera</h4>
-                      <p>Student ID: #8291</p>
-                    </div>
-                    <img src={boy} alt="profile" />
-                  </div>
-                </div>
-        
+        {/* LEFT VIDEOS */}
+        <div className="movie-list">
 
-        <div className="header">
-          <h1>Discussions</h1>
+          <div className="section-title">
 
-          <button className="create-btn" onClick={() => setShowCreate(true)}>
-            + Create Discussion
-          </button>
-        </div>
+            <h2>
+              Videos
+            </h2>
 
-        {/* ✅ APPROVED LIST */}
-        <h3>Approved Discussions</h3>
-        <div className="video-list">
-          {approved.map((item, i) => (
-            <div className="video-item" key={i}>
-              <img src={item.img} alt="" />
+          </div>
 
-              <div className="info">
-                <h3>{item.title}</h3>
-                <p>{item.category}</p>
-              </div>
+          {videos.map(
+            (video) => (
 
-              <button onClick={() => openChat(item)}>Open Chat</button>
-            </div>
-          ))}
-        </div>
+              <div
+                key={video.id}
+                className={`movie-card ${
+                  selectedVideo?.id ===
+                  video.id
+                    ? "active-movie"
+                    : ""
+                }`}
+                onClick={() =>
+                  setSelectedVideo(
+                    video
+                  )
+                }
+              >
 
-        {/* ❗ PENDING LIST */}
-        {pending.length > 0 && (
-          <>
-            <h3 style={{ marginTop: "20px" }}>Pending Approval</h3>
-            <div className="video-list">
-              {pending.map((item, i) => (
-                <div className="video-item pending" key={i}>
-                  <img src={item.img} alt="" />
-
-                  <div className="info">
-                    <h3>{item.title}</h3>
-                    <p>Waiting for approval</p>
-                  </div>
-
-                  {/* 🔥 DEMO ADMIN BUTTON */}
-                  <button onClick={() => approveDiscussion(i)}>
-                    Approve (Demo)
-                  </button>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-
-        {/* CHAT MODAL */}
-        {showChat && (
-          <div className="modal">
-            <div className="chat-box">
-
-              <h2>{selected.title}</h2>
-
-              <div className="messages">
-                {selected.messages.map((msg, i) => (
-                  <div key={i}>
-                    <strong>{msg.user}:</strong> {msg.text}
-                  </div>
-                ))}
-              </div>
-
-              <div className="chat-input">
-                <input
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Type message..."
+                <img
+                  src={
+                    video.imageURL
+                  }
+                  alt={
+                    video.title
+                  }
                 />
-                <button onClick={sendMessage}>Send</button>
+
+                <div>
+
+                  <h4>
+                    {video.title}
+                  </h4>
+
+                  <p>
+                    {video.faculty}
+                  </p>
+
+                </div>
+
               </div>
 
-              <button 
-                className="close-btn"
-                onClick={() => setShowChat(false)}
-                >
-                Close
+            )
+          )}
+
+        </div>
+
+        {/* CHAT */}
+        <div className="chat-section">
+
+          {/* HEADER */}
+          <div className="chat-header">
+
+            <div>
+
+              <h2>
+                Discussion Room
+              </h2>
+
+              <p>
+
+                {selectedVideo
+                  ? selectedVideo.title
+                  : "Select a video"}
+
+              </p>
+
+            </div>
+
+            <div className="online-badge">
+
+              <div className="online-dot"></div>
+
+              Active Room
+
+            </div>
+
+          </div>
+
+          {/* EMPTY */}
+          {!selectedVideo && (
+
+            <div className="empty-chat">
+
+              <MdMovie
+                size={60}
+              />
+
+              <h3>
+                Select a Video
+              </h3>
+
+              <p>
+                Open a discussion room
+                by selecting a video
+              </p>
+
+            </div>
+
+          )}
+
+          {/* MESSAGES */}
+          {selectedVideo && (
+
+            <div className="chat-messages">
+
+              {messages
+                .filter(
+                  (msg) =>
+                    msg.videoId ===
+                    selectedVideo.id
+                )
+                .map((msg) => (
+
+                  <div
+                    className="chat-message"
+                    key={msg.id}
+                  >
+
+                    {/* AVATAR */}
+                    <div className="chat-avatar">
+
+                      {msg.userName
+                        ?.charAt(0)
+                        ?.toUpperCase()}
+
+                    </div>
+
+                    {/* BUBBLE */}
+                    <div className="chat-bubble">
+
+                      <h4>
+                        {msg.userName}
+                      </h4>
+
+                      <p>
+                        {msg.message}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                ))}
+
+            </div>
+
+          )}
+
+          {/* INPUT */}
+          {selectedVideo && (
+
+            <div className="chat-input-area">
+
+              <textarea
+                placeholder="Write message..."
+                value={message}
+                onChange={(e) =>
+                  setMessage(
+                    e.target.value
+                  )
+                }
+              ></textarea>
+
+              <button
+                className="send-btn"
+                onClick={
+                  sendMessage
+                }
+              >
+
+                <MdSend />
+
+                Send
+
               </button>
 
             </div>
+
+          )}
+
+        </div>
+
+        {/* RIGHT ROOMS */}
+        <div className="discussion-rooms">
+
+          <div className="section-title">
+
+            <h2>
+              Chat Rooms
+            </h2>
+
           </div>
-        )}
 
-        {/* CREATE MODAL */}
-        {showCreate && (
-          <div className="modal">
-            <div className="modal-content">
+          {videos.map(
+            (video) => (
 
-              <h2>Create Discussion</h2>
+              <div
+                key={video.id}
+                className="room-card"
+                onClick={() =>
+                  setSelectedVideo(
+                    video
+                  )
+                }
+              >
 
-              <input
-                placeholder="Enter topic..."
-                value={newTopic}
-                onChange={(e) => setNewTopic(e.target.value)}
-              />
+                <div className="room-icon">
 
-              <div className="modal-actions">
-                <button onClick={() => setShowCreate(false)}>Cancel</button>
-                <button onClick={createDiscussion}>Send Request</button>
+                  <MdMovie />
+
+                </div>
+
+                <div>
+
+                  <h4>
+                    {video.title}
+                  </h4>
+
+                  <p>
+                    Discussion Room
+                  </p>
+
+                </div>
+
               </div>
 
-            </div>
-          </div>
-        )}
+            )
+          )}
+
+        </div>
 
       </div>
+
     </div>
+
   );
+
 };
 
 export default Discussion;

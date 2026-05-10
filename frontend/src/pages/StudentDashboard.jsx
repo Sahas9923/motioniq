@@ -186,19 +186,19 @@ const StudentDashboard = () => {
 
             </Link>
 
-            <Link to="/discussion">
-
-              <MdForum />
-
-              Discussions
-
-            </Link>
-
             <Link to="/reflections">
 
               <MdNotes />
 
               Reflections
+
+            </Link>
+
+            <Link to="/discussion">
+
+              <MdForum />
+
+              Discussions
 
             </Link>
 
