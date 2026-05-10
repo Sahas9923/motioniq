@@ -294,7 +294,7 @@ const LecturerDashboard = () => {
               className="manage-videos-btn"
               onClick={() =>
                 navigate(
-                  "/lecturer-videos"
+                  "/admin-videos"
                 )
               }
             >
@@ -318,9 +318,6 @@ const LecturerDashboard = () => {
 
           <div className="hero-content">
 
-            <span>
-              MOTIONIQ LECTURER PANEL
-            </span>
 
             <h2>
               Manage Student Learning

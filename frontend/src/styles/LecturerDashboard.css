@@ -384,6 +384,8 @@ body{
 }
 
 .hero-content h2{
+  margin-top:40px;
+  
   font-size:52px;
 
   line-height:1.1;
