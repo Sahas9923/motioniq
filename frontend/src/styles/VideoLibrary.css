@@ -6,28 +6,47 @@
   box-sizing:border-box;
 }
 
+/* =========================
+   ROOT
+========================= */
 html,
 body,
 #root{
   background:#020617;
+
   min-height:100%;
+  height:auto;
+
+  overflow-y:auto;
+  overflow-x:hidden;
+
+  scroll-behavior:smooth;
 }
 
 body{
   font-family:"Inter",sans-serif;
+
   background:#020617;
+
   color:white;
-  overflow-x:hidden;
 }
 
-/* PAGE */
+/* =========================
+   PAGE
+========================= */
 .student-library-page{
   min-height:100vh;
+
   display:flex;
+
   background:#020617;
+
+  overflow-y:auto;
 }
 
-/* SIDEBAR */
+/* =========================
+   SIDEBAR
+========================= */
 .student-sidebar{
   width:290px;
 
@@ -35,6 +54,8 @@ body{
   top:0;
   left:0;
   bottom:0;
+
+  overflow-y:auto;
 
   background:
     linear-gradient(
@@ -55,7 +76,21 @@ body{
   z-index:999;
 }
 
-/* LOGO */
+/* SIDEBAR SCROLL */
+.student-sidebar::-webkit-scrollbar{
+  width:6px;
+}
+
+.student-sidebar::-webkit-scrollbar-thumb{
+  background:
+    rgba(99,102,241,0.35);
+
+  border-radius:999px;
+}
+
+/* =========================
+   LOGO
+========================= */
 .student-sidebar-logo{
   display:flex;
   align-items:center;
@@ -94,10 +129,13 @@ body{
   font-size:14px;
 }
 
-/* NAV */
+/* =========================
+   NAVIGATION
+========================= */
 .student-nav-links{
   display:flex;
   flex-direction:column;
+
   gap:14px;
 }
 
@@ -148,7 +186,9 @@ body{
   color:white !important;
 }
 
-/* PROFILE */
+/* =========================
+   PROFILE
+========================= */
 .student-profile-box{
   display:flex;
   align-items:center;
@@ -197,7 +237,9 @@ body{
   font-size:13px;
 }
 
-/* LOGOUT */
+/* =========================
+   LOGOUT
+========================= */
 .logout-btn{
   width:100%;
   height:56px;
@@ -220,35 +262,57 @@ body{
   font-weight:600;
 
   cursor:pointer;
+
+  transition:0.3s;
 }
 
-/* MAIN */
+.logout-btn:hover{
+  transform:translateY(-2px);
+
+  background:
+    rgba(239,68,68,0.18);
+}
+
+/* =========================
+   MAIN
+========================= */
 .student-library-main{
   flex:1;
 
   margin-left:290px;
 
   padding:35px;
+
+  min-height:100vh;
+
+  overflow-y:auto;
 }
 
-/* TOP */
+/* =========================
+   TOP
+========================= */
 .library-top{
   margin-bottom:30px;
 }
 
 .library-top h1{
   font-size:46px;
+
   margin-bottom:10px;
 }
 
 .library-top p{
   color:#94a3b8;
+
   font-size:15px;
 }
 
-/* FILTER */
+/* =========================
+   FILTER BAR
+========================= */
 .filter-bar{
   display:flex;
+
   gap:20px;
 
   margin-bottom:35px;
@@ -275,6 +339,7 @@ body{
 
 .search-icon{
   font-size:22px;
+
   color:#94a3b8;
 
   margin-right:12px;
@@ -284,6 +349,7 @@ body{
   flex:1;
 
   background:transparent;
+
   border:none;
   outline:none;
 
@@ -321,7 +387,9 @@ body{
   background:#0f172a;
 }
 
-/* GRID */
+/* =========================
+   VIDEO GRID
+========================= */
 .student-video-grid{
   display:grid;
 
@@ -329,9 +397,13 @@ body{
     repeat(auto-fill,minmax(350px,1fr));
 
   gap:28px;
+
+  overflow:visible;
 }
 
-/* CARD */
+/* =========================
+   VIDEO CARD
+========================= */
 .student-video-card{
   background:
     rgba(15,23,42,0.85);
@@ -360,6 +432,7 @@ body{
 /* IMAGE */
 .video-image-wrapper{
   position:relative;
+
   overflow:hidden;
 }
 
@@ -376,9 +449,10 @@ body{
   transform:scale(1.06);
 }
 
-/* PLAY OVERLAY */
+/* PLAY */
 .play-overlay{
   position:absolute;
+
   inset:0;
 
   background:
@@ -395,6 +469,7 @@ body{
 
 .play-overlay svg{
   font-size:80px;
+
   color:white;
 }
 
@@ -402,7 +477,9 @@ body{
   opacity:1;
 }
 
-/* CONTENT */
+/* =========================
+   CONTENT
+========================= */
 .student-video-content{
   padding:24px;
 }
@@ -410,6 +487,7 @@ body{
 .student-video-top{
   display:flex;
   justify-content:space-between;
+
   gap:20px;
 
   margin-bottom:18px;
@@ -417,11 +495,13 @@ body{
 
 .student-video-top h3{
   font-size:24px;
+
   margin-bottom:10px;
 }
 
 .student-video-top span{
   color:#818cf8;
+
   font-size:14px;
 }
 
@@ -475,7 +555,9 @@ body{
   gap:8px;
 }
 
-/* ACTIONS */
+/* =========================
+   ACTIONS
+========================= */
 .student-actions{
   display:flex;
 }
@@ -518,7 +600,25 @@ body{
     0 10px 25px rgba(37,99,235,0.35);
 }
 
-/* RESPONSIVE */
+/* =========================
+   SCROLLBAR
+========================= */
+body::-webkit-scrollbar,
+.student-library-main::-webkit-scrollbar{
+  width:8px;
+}
+
+body::-webkit-scrollbar-thumb,
+.student-library-main::-webkit-scrollbar-thumb{
+  background:
+    rgba(99,102,241,0.35);
+
+  border-radius:999px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
 @media (max-width:1000px){
 
   .student-sidebar{
