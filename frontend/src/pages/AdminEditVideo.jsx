@@ -31,97 +31,129 @@ import "../styles/AdminEditVideo.css";
 
 const AdminEditVideo = () => {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const location = useLocation();
+  const location =
+    useLocation();
 
   const video =
     location.state?.video;
 
-  /* VIDEO */
+  /* =========================
+     VIDEO STATES
+  ========================= */
   const [title, setTitle] =
-    useState(video?.title || "");
-
-  const [description, setDescription] =
     useState(
-      video?.description || ""
+      video?.title || ""
     );
 
-  const [faculty, setFaculty] =
-    useState(video?.faculty || "");
+  const [description,
+    setDescription] =
+      useState(
+        video?.description ||
+          ""
+      );
 
-  const [videoURL, setVideoURL] =
-    useState(video?.videoURL || "");
+  const [faculty,
+    setFaculty] =
+      useState(
+        video?.faculty || ""
+      );
 
-  const [imageURL, setImageURL] =
-    useState(video?.imageURL || "");
+  const [videoURL,
+    setVideoURL] =
+      useState(
+        video?.videoURL || ""
+      );
 
-  /* QUESTIONS */
-  const [questions, setQuestions] =
-    useState([]);
+  const [imageURL,
+    setImageURL] =
+      useState(
+        video?.imageURL || ""
+      );
 
-  const [question, setQuestion] =
-    useState("");
+  /* =========================
+     QUESTION STATES
+  ========================= */
+  const [questions,
+    setQuestions] =
+      useState([]);
 
-  const [option1, setOption1] =
-    useState("");
+  const [question,
+    setQuestion] =
+      useState("");
 
-  const [option2, setOption2] =
-    useState("");
+  const [option1,
+    setOption1] =
+      useState("");
 
-  const [option3, setOption3] =
-    useState("");
+  const [option2,
+    setOption2] =
+      useState("");
 
-  const [option4, setOption4] =
-    useState("");
+  const [option3,
+    setOption3] =
+      useState("");
 
-  /* LOAD QUESTIONS */
+  const [option4,
+    setOption4] =
+      useState("");
+
+  /* =========================
+     LOAD QUESTIONS
+  ========================= */
   useEffect(() => {
 
-    fetchQuestions();
+    const fetchQuestions =
+      async () => {
 
-  }, []);
+        try {
 
-  /* FETCH */
-  const fetchQuestions =
-    async () => {
-
-      try {
-
-        const q = query(
-          collection(
-            db,
-            "guidedQuestions"
-          ),
-          where(
-            "videoId",
-            "==",
-            video.id
-          )
-        );
-
-        const querySnapshot =
-          await getDocs(q);
-
-        const data =
-          querySnapshot.docs.map(
-            (doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            })
+          const q = query(
+            collection(
+              db,
+              "guidedQuestions"
+            ),
+            where(
+              "videoId",
+              "==",
+              video.id
+            )
           );
 
-        setQuestions(data);
+          const querySnapshot =
+            await getDocs(q);
 
-      } catch (err) {
+          const data =
+            querySnapshot.docs.map(
+              (doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              })
+            );
 
-        console.log(err);
+          setQuestions(data);
 
-      }
+        } catch (err) {
 
-    };
+          console.log(err);
 
-  /* UPDATE VIDEO */
+        }
+
+      };
+
+    if (video?.id) {
+
+      fetchQuestions();
+
+    }
+
+  }, [video]);
+
+  /* =========================
+     UPDATE VIDEO
+  ========================= */
   const handleUpdateVideo =
     async () => {
 
@@ -158,7 +190,9 @@ const AdminEditVideo = () => {
 
     };
 
-  /* ADD QUESTION */
+  /* =========================
+     ADD QUESTION
+  ========================= */
   const handleAddQuestion =
     async () => {
 
@@ -186,9 +220,11 @@ const AdminEditVideo = () => {
             "guidedQuestions"
           ),
           {
-            videoId: video.id,
+            videoId:
+              video.id,
 
-            videoTitle: title,
+            videoTitle:
+              title,
 
             question,
 
@@ -205,12 +241,17 @@ const AdminEditVideo = () => {
         );
 
         setQuestion("");
+
         setOption1("");
+
         setOption2("");
+
         setOption3("");
+
         setOption4("");
 
-        fetchQuestions();
+        /* REFRESH */
+        window.location.reload();
 
       } catch (err) {
 
@@ -220,7 +261,9 @@ const AdminEditVideo = () => {
 
     };
 
-  /* DELETE */
+  /* =========================
+     DELETE QUESTION
+  ========================= */
   const handleDeleteQuestion =
     async (id) => {
 
@@ -234,7 +277,8 @@ const AdminEditVideo = () => {
           )
         );
 
-        fetchQuestions();
+        /* REFRESH */
+        window.location.reload();
 
       } catch (err) {
 
@@ -248,7 +292,9 @@ const AdminEditVideo = () => {
 
     <div className="edit-page">
 
-      {/* TOP */}
+      {/* =========================
+          TOP
+      ========================= */}
       <div className="edit-top">
 
         <div>
@@ -281,13 +327,17 @@ const AdminEditVideo = () => {
 
       </div>
 
-      {/* CONTENT */}
+      {/* =========================
+          CONTENT
+      ========================= */}
       <div className="edit-container">
 
-        {/* LEFT */}
+        {/* =========================
+            LEFT
+        ========================= */}
         <div className="left-section">
 
-          {/* VIDEO */}
+          {/* VIDEO INFO */}
           <div className="edit-card">
 
             <h2>
@@ -319,7 +369,9 @@ const AdminEditVideo = () => {
               </label>
 
               <textarea
-                value={description}
+                value={
+                  description
+                }
                 onChange={(e) =>
                   setDescription(
                     e.target.value
@@ -400,6 +452,7 @@ const AdminEditVideo = () => {
 
             </div>
 
+            {/* SAVE */}
             <button
               className="save-btn"
               onClick={
@@ -415,7 +468,9 @@ const AdminEditVideo = () => {
 
           </div>
 
-          {/* ADD QUESTION */}
+          {/* =========================
+              ADD QUESTION
+          ========================= */}
           <div className="edit-card">
 
             <h2>
@@ -439,6 +494,7 @@ const AdminEditVideo = () => {
 
             </div>
 
+            {/* OPTIONS */}
             <div className="grid-2">
 
               <input
@@ -487,6 +543,7 @@ const AdminEditVideo = () => {
 
             </div>
 
+            {/* ADD BUTTON */}
             <button
               className="add-btn"
               onClick={
@@ -504,7 +561,9 @@ const AdminEditVideo = () => {
 
         </div>
 
-        {/* RIGHT */}
+        {/* =========================
+            RIGHT
+        ========================= */}
         <div className="edit-card">
 
           <h2>
@@ -513,56 +572,60 @@ const AdminEditVideo = () => {
 
           <div className="question-list">
 
-            {questions.map((q) => (
+            {questions.map(
+              (q) => (
 
-              <div
-                className="question-card"
-                key={q.id}
-              >
+                <div
+                  className="question-card"
+                  key={q.id}
+                >
 
-                <div className="question-header">
+                  <div className="question-header">
 
-                  <h3>
-                    {q.question}
-                  </h3>
+                    <h3>
+                      {q.question}
+                    </h3>
 
-                  <button
-                    className="question-delete"
-                    onClick={() =>
-                      handleDeleteQuestion(
-                        q.id
+                    <button
+                      className="question-delete"
+                      onClick={() =>
+                        handleDeleteQuestion(
+                          q.id
+                        )
+                      }
+                    >
+
+                      <MdDelete />
+
+                    </button>
+
+                  </div>
+
+                  <ul>
+
+                    {q.answers?.map(
+                      (
+                        answer,
+                        index
+                      ) => (
+
+                        <li
+                          key={index}
+                        >
+
+                          {answer}
+
+                        </li>
+
                       )
-                    }
-                  >
+                    )}
 
-                    <MdDelete />
-
-                  </button>
+                  </ul>
 
                 </div>
 
-                <ul>
-
-                  {q.answers?.map(
-                    (
-                      answer,
-                      index
-                    ) => (
-
-                      <li key={index}>
-
-                        {answer}
-
-                      </li>
-
-                    )
-                  )}
-
-                </ul>
-
-              </div>
-
-            ))}
+              )
+            )}
 
           </div>
 

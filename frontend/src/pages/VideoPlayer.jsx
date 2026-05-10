@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+// VideoPlayer.jsx
+
+import React, {
+  useEffect,
+  useState,
+} from "react";
 
 import {
   useLocation,
@@ -29,23 +34,70 @@ const VideoPlayer = () => {
   const video =
     location.state;
 
+  /* =========================
+     STATES
+  ========================= */
   const [questions, setQuestions] =
     useState([]);
 
-  const [showQuestions, setShowQuestions] =
-    useState(false);
+  const [showQuestions,
+    setShowQuestions] =
+      useState(false);
 
-  const [showReflection, setShowReflection] =
-    useState(false);
+  const [showReflection,
+    setShowReflection] =
+      useState(false);
 
-  const [reflection, setReflection] =
-    useState("");
+  const [reflection,
+    setReflection] =
+      useState("");
 
-  const [selectedAnswers, setSelectedAnswers] =
-    useState({});
+  const [selectedAnswers,
+    setSelectedAnswers] =
+      useState({});
 
-  /* LOAD QUESTIONS */
+  /* =========================
+     LOAD QUESTIONS
+  ========================= */
   useEffect(() => {
+
+    const fetchQuestions =
+      async () => {
+
+        try {
+
+          const q = query(
+            collection(
+              db,
+              "guidedQuestions"
+            ),
+            where(
+              "videoId",
+              "==",
+              video.id
+            )
+          );
+
+          const querySnapshot =
+            await getDocs(q);
+
+          const data =
+            querySnapshot.docs.map(
+              (doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              })
+            );
+
+          setQuestions(data);
+
+        } catch (err) {
+
+          console.log(err);
+
+        }
+
+      };
 
     if (video?.id) {
 
@@ -55,46 +107,9 @@ const VideoPlayer = () => {
 
   }, [video]);
 
-  /* FETCH QUESTIONS */
-  const fetchQuestions =
-    async () => {
-
-      try {
-
-        const q = query(
-          collection(
-            db,
-            "guidedQuestions"
-          ),
-          where(
-            "videoId",
-            "==",
-            video.id
-          )
-        );
-
-        const querySnapshot =
-          await getDocs(q);
-
-        const data =
-          querySnapshot.docs.map(
-            (doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            })
-          );
-
-        setQuestions(data);
-
-      } catch (err) {
-
-        console.log(err);
-
-      }
-
-    };
-
-  /* NO VIDEO */
+  /* =========================
+     NO VIDEO
+  ========================= */
   if (!video) {
 
     return (
@@ -102,7 +117,7 @@ const VideoPlayer = () => {
       <div className="player-page">
 
         <h2>
-          No video selected
+          No Video Selected
         </h2>
 
       </div>
@@ -111,34 +126,42 @@ const VideoPlayer = () => {
 
   }
 
-  /* VIDEO */
+  /* VIDEO SOURCE */
   const videoSrc =
     video.videoURL || video.url;
 
   const type =
     video.videoType || "YOUTUBE";
 
-  /* YOUTUBE */
-  const getYouTubeEmbed = (url) => {
+  /* =========================
+     YOUTUBE EMBED
+  ========================= */
+  const getYouTubeEmbed =
+    (url) => {
 
-    if (!url) return "";
+      if (!url)
+        return "";
 
-    if (url.includes("embed"))
-      return url;
+      if (
+        url.includes("embed")
+      )
+        return url;
 
-    const regExp =
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/;
+      const regExp =
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/;
 
-    const match =
-      url.match(regExp);
+      const match =
+        url.match(regExp);
 
-    return match
-      ? `https://www.youtube.com/embed/${match[1]}?autoplay=1`
-      : url;
+      return match
+        ? `https://www.youtube.com/embed/${match[1]}?autoplay=1`
+        : url;
 
-  };
+    };
 
-  /* FINISH VIDEO */
+  /* =========================
+     FINISH VIDEO
+  ========================= */
   const handleFinishVideo =
     () => {
 
@@ -146,17 +169,23 @@ const VideoPlayer = () => {
         questions.length > 0
       ) {
 
-        setShowQuestions(true);
+        setShowQuestions(
+          true
+        );
 
       } else {
 
-        setShowReflection(true);
+        setShowReflection(
+          true
+        );
 
       }
 
     };
 
-  /* SELECT ANSWER */
+  /* =========================
+     SELECT ANSWER
+  ========================= */
   const handleSelectAnswer =
     (
       questionId,
@@ -173,7 +202,9 @@ const VideoPlayer = () => {
 
     };
 
-  /* SUBMIT QUESTIONS */
+  /* =========================
+     SUBMIT QUESTIONS
+  ========================= */
   const handleSubmitQuestions =
     async () => {
 
@@ -230,9 +261,23 @@ const VideoPlayer = () => {
 
     };
 
-  /* SAVE REFLECTION */
+  /* =========================
+     SAVE REFLECTION
+  ========================= */
   const handleSaveReflection =
     async () => {
+
+      if (
+        !reflection.trim()
+      ) {
+
+        alert(
+          "Please enter reflection"
+        );
+
+        return;
+
+      }
 
       try {
 
@@ -281,21 +326,39 @@ const VideoPlayer = () => {
 
       <div className="player-container">
 
-        {/* BACK */}
-        <button
-          className="back-btn"
-          onClick={() =>
-            navigate(-1)
-          }
-        >
-          ← Back
-        </button>
+        {/* =========================
+            TOP BAR
+        ========================= */}
+        <div className="player-top">
 
-        {/* VIDEO */}
+          <button
+            className="back-btn"
+            onClick={() =>
+              navigate(-1)
+            }
+          >
+            ← Back
+          </button>
+
+          <button
+            className="finish-btn"
+            onClick={
+              handleFinishVideo
+            }
+          >
+            Finish Video
+          </button>
+
+        </div>
+
+        {/* =========================
+            VIDEO
+        ========================= */}
         <div className="video-wrapper">
 
           {/* YOUTUBE */}
-          {type === "YOUTUBE" && (
+          {type ===
+            "YOUTUBE" && (
 
             <iframe
               src={
@@ -313,13 +376,16 @@ const VideoPlayer = () => {
 
           )}
 
-          {/* UPLOADED */}
-          {type === "UPLOAD" && (
+          {/* UPLOAD */}
+          {type ===
+            "UPLOAD" && (
 
             <video controls>
 
               <source
-                src={videoSrc}
+                src={
+                  videoSrc
+                }
               />
 
             </video>
@@ -328,47 +394,36 @@ const VideoPlayer = () => {
 
         </div>
 
-        {/* TOP ROW */}
-        <div className="video-top-row">
+        {/* =========================
+            VIDEO INFO
+        ========================= */}
+        <div className="video-details">
 
-          {/* INFO */}
-          <div className="video-info">
+          <h1>
+            {video.title}
+          </h1>
 
-            <h2>
-              {video.title}
-            </h2>
+          <p>
+            {video.description}
+          </p>
 
-            <p>
-              {video.description}
-            </p>
+          {video.faculty && (
 
-            {video.faculty && (
+            <span className="video-badge">
 
-              <span className="video-tag">
+              {video.faculty}
 
-                {video.faculty}
+            </span>
 
-              </span>
-
-            )}
-
-          </div>
-
-          {/* FINISH */}
-          <button
-            className="finish-btn"
-            onClick={
-              handleFinishVideo
-            }
-          >
-            Finish Video
-          </button>
+          )}
 
         </div>
 
       </div>
 
-      {/* QUESTIONS */}
+      {/* =========================
+          QUESTIONS POPUP
+      ========================= */}
       {showQuestions && (
 
         <div className="popup-overlay">
@@ -445,7 +500,7 @@ const VideoPlayer = () => {
               )
             )}
 
-            {/* BUTTONS */}
+            {/* ACTIONS */}
             <div className="popup-actions">
 
               <button
@@ -476,7 +531,9 @@ const VideoPlayer = () => {
 
       )}
 
-      {/* REFLECTION */}
+      {/* =========================
+          REFLECTION POPUP
+      ========================= */}
       {showReflection && (
 
         <div className="popup-overlay">
@@ -497,7 +554,7 @@ const VideoPlayer = () => {
               }
             ></textarea>
 
-            {/* BUTTONS */}
+            {/* ACTIONS */}
             <div className="popup-actions">
 
               <button
