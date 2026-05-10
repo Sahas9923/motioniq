@@ -29,6 +29,9 @@ const Discussion = () => {
   const navigate =
     useNavigate();
 
+  /* =========================
+     STATES
+  ========================= */
   const [videos, setVideos] =
     useState([]);
 
@@ -41,6 +44,17 @@ const Discussion = () => {
   const [selectedVideo, setSelectedVideo] =
     useState(null);
 
+  /* DIALOG */
+  const [showDialog, setShowDialog] =
+    useState(false);
+
+  const [requestTitle, setRequestTitle] =
+    useState("");
+
+  const [selectedRequestVideo,
+    setSelectedRequestVideo] =
+      useState(null);
+
   /* USER */
   const userName =
     localStorage.getItem(
@@ -52,7 +66,9 @@ const Discussion = () => {
       "userEmail"
     ) || "";
 
-  /* LOAD */
+  /* =========================
+     LOAD
+  ========================= */
   useEffect(() => {
 
     fetchVideos();
@@ -61,7 +77,9 @@ const Discussion = () => {
 
   }, []);
 
-  /* FETCH VIDEOS */
+  /* =========================
+     FETCH VIDEOS
+  ========================= */
   const fetchVideos =
     async () => {
 
@@ -93,7 +111,9 @@ const Discussion = () => {
 
     };
 
-  /* FETCH MESSAGES */
+  /* =========================
+     FETCH CHATS
+  ========================= */
   const fetchMessages =
     async () => {
 
@@ -115,7 +135,6 @@ const Discussion = () => {
             })
           );
 
-        /* SORT */
         data.sort(
           (a, b) => {
 
@@ -142,7 +161,9 @@ const Discussion = () => {
 
     };
 
-  /* SEND */
+  /* =========================
+     SEND MESSAGE
+  ========================= */
   const sendMessage =
     async () => {
 
@@ -157,7 +178,6 @@ const Discussion = () => {
 
       try {
 
-        /* SAVE */
         await addDoc(
           collection(
             db,
@@ -182,15 +202,22 @@ const Discussion = () => {
             faculty:
               selectedVideo.faculty,
 
+            senderRole:
+              "student",
+
+            adminUnread:
+              true,
+
+            status:
+              "active",
+
             createdAt:
               serverTimestamp(),
           }
         );
 
-        /* CLEAR */
         setMessage("");
 
-        /* REFRESH */
         fetchMessages();
 
       } catch (err) {
@@ -201,7 +228,78 @@ const Discussion = () => {
 
     };
 
-  /* LOGOUT */
+  /* =========================
+     CREATE CHAT REQUEST
+  ========================= */
+  const createChatRequest =
+    async () => {
+
+      if (
+        !requestTitle ||
+        !selectedRequestVideo
+      ) {
+
+        alert(
+          "Select video and enter title"
+        );
+
+        return;
+
+      }
+
+      try {
+
+        await addDoc(
+          collection(
+            db,
+            "chatRequests"
+          ),
+          {
+            userName,
+
+            email,
+
+            title:
+              requestTitle,
+
+            videoId:
+              selectedRequestVideo.id,
+
+            videoTitle:
+              selectedRequestVideo.title,
+
+            videoImage:
+              selectedRequestVideo.imageURL,
+
+            status:
+              "pending",
+
+            requestedAt:
+              serverTimestamp(),
+          }
+        );
+
+        alert(
+          "Chat request sent to admin!"
+        );
+
+        setShowDialog(false);
+
+        setRequestTitle("");
+
+        setSelectedRequestVideo(null);
+
+      } catch (err) {
+
+        console.log(err);
+
+      }
+
+    };
+
+  /* =========================
+     LOGOUT
+  ========================= */
   const handleLogout =
     () => {
 
@@ -215,7 +313,9 @@ const Discussion = () => {
 
     <div className="discussion-page">
 
-      {/* SIDEBAR */}
+      {/* =========================
+          SIDEBAR
+      ========================= */}
       <div className="student-sidebar">
 
         <div>
@@ -241,7 +341,7 @@ const Discussion = () => {
 
           </div>
 
-          {/* NAV */}
+          {/* NAVIGATION */}
           <div className="student-nav-links">
 
             <button
@@ -261,7 +361,7 @@ const Discussion = () => {
             <button
               onClick={() =>
                 navigate(
-                  "/video-library"
+                  "/videos"
                 )
               }
             >
@@ -355,65 +455,10 @@ const Discussion = () => {
 
       </div>
 
-      {/* MAIN */}
+      {/* =========================
+          MAIN
+      ========================= */}
       <div className="discussion-main">
-
-        {/* LEFT VIDEOS */}
-        <div className="movie-list">
-
-          <div className="section-title">
-
-            <h2>
-              Videos
-            </h2>
-
-          </div>
-
-          {videos.map(
-            (video) => (
-
-              <div
-                key={video.id}
-                className={`movie-card ${
-                  selectedVideo?.id ===
-                  video.id
-                    ? "active-movie"
-                    : ""
-                }`}
-                onClick={() =>
-                  setSelectedVideo(
-                    video
-                  )
-                }
-              >
-
-                <img
-                  src={
-                    video.imageURL
-                  }
-                  alt={
-                    video.title
-                  }
-                />
-
-                <div>
-
-                  <h4>
-                    {video.title}
-                  </h4>
-
-                  <p>
-                    {video.faculty}
-                  </p>
-
-                </div>
-
-              </div>
-
-            )
-          )}
-
-        </div>
 
         {/* CHAT */}
         <div className="chat-section">
@@ -469,7 +514,7 @@ const Discussion = () => {
 
           )}
 
-          {/* MESSAGES */}
+          {/* CHAT MESSAGES */}
           {selectedVideo && (
 
             <div className="chat-messages">
@@ -496,7 +541,7 @@ const Discussion = () => {
 
                     </div>
 
-                    {/* BUBBLE */}
+                    {/* MESSAGE */}
                     <div className="chat-bubble">
 
                       <h4>
@@ -551,23 +596,44 @@ const Discussion = () => {
 
         </div>
 
-        {/* RIGHT ROOMS */}
+        {/* =========================
+            CHAT ROOMS
+        ========================= */}
         <div className="discussion-rooms">
 
-          <div className="section-title">
+          {/* HEADER */}
+          <div className="rooms-header">
 
             <h2>
               Chat Rooms
             </h2>
 
+            {/* PLUS */}
+            <button
+              className="create-room-btn"
+              onClick={() =>
+                setShowDialog(true)
+              }
+            >
+
+              +
+
+            </button>
+
           </div>
 
+          {/* ROOMS */}
           {videos.map(
             (video) => (
 
               <div
                 key={video.id}
-                className="room-card"
+                className={`room-card ${
+                  selectedVideo?.id ===
+                  video.id
+                    ? "active-movie"
+                    : ""
+                }`}
                 onClick={() =>
                   setSelectedVideo(
                     video
@@ -575,12 +641,14 @@ const Discussion = () => {
                 }
               >
 
+                {/* ICON */}
                 <div className="room-icon">
 
                   <MdMovie />
 
                 </div>
 
+                {/* TEXT */}
                 <div>
 
                   <h4>
@@ -601,6 +669,111 @@ const Discussion = () => {
         </div>
 
       </div>
+
+      {/* =========================
+          DIALOG
+      ========================= */}
+      {showDialog && (
+
+        <div className="dialog-overlay">
+
+          <div className="dialog-box">
+
+            <h2>
+              Create Chat Request
+            </h2>
+
+            {/* TITLE */}
+            <input
+              type="text"
+              placeholder="Enter discussion title"
+              value={requestTitle}
+              onChange={(e) =>
+                setRequestTitle(
+                  e.target.value
+                )
+              }
+            />
+
+            {/* VIDEOS */}
+            <div className="dialog-videos">
+
+              {videos.map((video) => (
+
+                <div
+                  key={video.id}
+                  className={`dialog-video-card ${
+                    selectedRequestVideo?.id ===
+                    video.id
+                      ? "selected-dialog-video"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    setSelectedRequestVideo(
+                      video
+                    )
+                  }
+                >
+
+                  <img
+                    src={
+                      video.imageURL
+                    }
+                    alt={
+                      video.title
+                    }
+                  />
+
+                  <div>
+
+                    <h4>
+                      {video.title}
+                    </h4>
+
+                    <p>
+                      {video.faculty}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+            {/* ACTIONS */}
+            <div className="dialog-actions">
+
+              <button
+                className="cancel-btn"
+                onClick={() =>
+                  setShowDialog(false)
+                }
+              >
+
+                Cancel
+
+              </button>
+
+              <button
+                className="submit-btn"
+                onClick={
+                  createChatRequest
+                }
+              >
+
+                Send Request
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
 
     </div>
 
